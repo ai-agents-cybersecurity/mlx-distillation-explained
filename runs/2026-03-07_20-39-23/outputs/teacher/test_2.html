@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest & Vine | Farm-to-Table Dining in Napa Valley</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #FDF6EC; color: #3B2F2F; }
+        .sans { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+
+        header {
+            background: linear-gradient(135deg, #5C4033 0%, #3B2F2F 50%, #4A5D3A 100%);
+            color: #FDF6EC;
+            text-align: center;
+            padding: 60px 20px 70px;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-top: 30px solid #3B2F2F;
+        }
+        nav { background: #4A5D3A; padding: 14px 20px; text-align: center; }
+        nav a { color: #E8DCC8; text-decoration: none; margin: 0 18px; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s; }
+        nav a:hover { color: #C67B4E; }
+        .logo-accent { color: #C67B4E; font-size: 1.2rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+        h1 { font-size: 3.5rem; letter-spacing: 3px; margin-bottom: 12px; font-weight: 400; }
+        h1 span { color: #C67B4E; }
+        .tagline { font-style: italic; font-size: 1.3rem; color: #D4C5A9; margin-bottom: 20px; }
+        .hero-detail { font-size: 0.95rem; color: #BFB49A; letter-spacing: 1px; }
+
+        main { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 8px; }
+        .section-title .divider { width: 60px; height: 2px; background: #C67B4E; margin: 0 auto; }
+
+        .experience { padding: 60px 0 50px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .feature { background: #FFFBF3; border: 1px solid #E8DCC8; border-radius: 8px; padding: 35px 30px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+        .feature:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(92,64,51,0.12); }
+        .feature .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .feature h3 { font-size: 1.2rem; color: #4A5D3A; margin-bottom: 10px; font-weight: 400; }
+        .feature p { font-size: 0.95rem; line-height: 1.7; color: #6B5B4F; }
+        .feature .price { color: #C67B4E; font-weight: 600; font-size: 1rem; margin-top: 8px; display: inline-block; }
+
+        .about { padding: 50px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about-text h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 20px; }
+        .about-text p { font-size: 1rem; line-height: 1.8; color: #6B5B4F; margin-bottom: 15px; }
+        .about-text .chef-name { color: #C67B4E; font-weight: 700; }
+        .about-visual { background: linear-gradient(145deg, #4A5D3A, #6B7F56); border-radius: 12px; padding: 50px 35px; color: #FDF6EC; text-align: center; }
+        .about-visual .quote { font-size: 1.4rem; font-style: italic; line-height: 1.6; margin-bottom: 20px; }
+        .about-visual .attribution { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; color: #D4C5A9; }
+
+        .info-bar { background: #5C4033; color: #FDF6EC; padding: 50px 20px; margin: 50px 0 0; }
+        .info-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; }
+        .info-item .label { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #C67B4E; margin-bottom: 10px; }
+        .info-item p { font-size: 1rem; line-height: 1.7; color: #E8DCC8; }
+
+        .cta-section { text-align: center; padding: 60px 20px; background: linear-gradient(to right, #F5EDE0, #FDF6EC, #F5EDE0); }
+        .cta-section h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 15px; }
+        .cta-section p { color: #6B5B4F; margin-bottom: 25px; font-size: 1.05rem; }
+        .cta-btn { display: inline-block; background: #C67B4E; color: #FDF6EC; padding: 15px 45px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; transition: background 0.3s; }
+        .cta-btn:hover { background: #A8623A; }
+
+        footer { background: #3B2F2F; color: #BFB49A; text-align: center; padding: 35px 20px; }
+        footer p { font-size: 0.85rem; margin-bottom: 6px; line-height: 1.6; }
+        footer .footer-name { color: #C67B4E; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 12px; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.3rem; }
+            .about { grid-template-columns: 1fr; }
+            nav a { margin: 0 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="sans">
+    <a href="#experience">Menu</a>
+    <a href="#about">Our Story</a>
+    <a href="#visit">Visit</a>
+    <a href="#reservations">Reservations</a>
+</nav>
+
+<header>
+    <div class="logo-accent sans">Napa Valley, California</div>
+    <h1>Harvest <span>&</span> Vine</h1>
+    <p class="tagline">"From our farm to your table."</p>
+    <p class="hero-detail sans">Seasonal American · Mediterranean Influences · Estate Grown</p>
+</header>
+
+<main>
+    <section class="experience" id="experience">
+        <div class="section-title">
+            <h2>The Dining Experience</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <div class="icon">🌿</div>
+                <h3>Chef's Tasting Menu</h3>
+                <p>A curated journey through the season's finest ingredients, sourced from our estate farm and local purveyors. Five courses with optional wine pairings.</p>
+                <span class="price sans">$95 per person</span>
+            </div>
+            <div class="feature">
+                <div class="icon">🍽️</div>
+                <h3>À La Carte Dining</h3>
+                <p>Seasonal entrées blending American heartiness with Mediterranean brightness — wood-fired meats, house-made pastas, and garden-fresh compositions.</p>
+                <span class="price sans">Entrées $28–$45</span>
+            </div>
+            <div class="feature">
+                <div class="icon">🍷</div>
+                <h3>Wine Cellar</h3>
+                <p>Over 200 selections celebrating Napa Valley's finest estates alongside Old World treasures. Our sommelier is delighted to guide your pairing journey.</p>
+                <span class="price sans">200+ Selections</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-text">
+            <h2>Our Story</h2>
+            <p>Harvest & Vine was born from a simple belief: the best meals begin in rich soil. Nestled among the rolling vineyards of Napa Valley, our restaurant celebrates the profound connection between land, season, and table.</p>
+            <p>Under the direction of <span class="chef-name">Chef Isabella Torres</span>, a James Beard Award nominee, our kitchen transforms estate-grown produce, sustainably raised proteins, and foraged ingredients into dishes that honor both American culinary tradition and the sun-soaked flavors of the Mediterranean.</p>
+            <p>Every evening, our menu tells the story of what's growing, what's ripe, and what the valley has to offer — right now, at this very moment.</p>
+        </div>
+        <div class="about-visual">
+            <p class="quote">"Cooking is an act of listening — to the soil, to the season, to the ingredient itself. My job is simply to not get in the way."</p>
+            <p class="attribution">— Chef Isabella Torres</p>
+        </div>
+    </section>
+</main>
+
+<section class="info-bar" id="visit">
+    <div class="info-grid">
+        <div class="info-item">
+            <div class="label sans">Hours</div>
+            <p>Wednesday – Sunday<br>Dinner: 5:30 – 10:00 PM<br>Monday & Tuesday: Closed</p>
+        </div>
+        <div class="info-item">
+            <div class="label sans">Reservations</div>
+            <p>Highly recommended<br>📞 (707) 555-0142<br>reservations@harvestandvine.com</p>
+        </div>
+        <div class="info-item">
+            <div class="label sans">Private Events</div>
+            <p>Private dining room available<br>Accommodates up to 40 guests<br>Inquire for custom menus</p>
+        </div>
+        <div class="info-item">
+            <div class="label sans">Location</div>
+            <p>1284 Silverado Trail<br>Napa Valley, CA 94558<br>Among the vineyards</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section" id="reservations">
+    <h2>Reserve Your Table</h2>
+    <p>Join us for an evening where every dish tells the story of Napa Valley.</p>
+    <a href="mailto:reservations@harvestandvine.com" class="cta-btn sans">Make a Reservation</a>
+</section>
+
+<footer>
+    <p class="footer-name sans">Harvest & Vine</p>
+    <p>1284 Silverado Trail, Napa Valley, CA 94558</p>
+    <p>📞 (707) 555-0142 &nbsp;·&nbsp; reservations@harvestandvine.com</p>
+    <p style="margin-top: 15px; font-size: 0.8rem; color: #7A6E62;">© 2024 Harvest & Vine. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

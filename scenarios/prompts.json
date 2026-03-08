@@ -1,0 +1,47 @@
+{
+  "system_prompt": "You are a web designer assistant. Given a brief describing a business or organization, you generate a complete, single-file HTML landing page. Your output must be ONLY the raw HTML — no explanations, no markdown fences, no text before or after the HTML.\n\nRules:\n- Start with <!DOCTYPE html> and include <html>, <head>, <body>.\n- All CSS must be in a <style> tag inside <head>. No external stylesheets.\n- Use modern, clean design: readable fonts, good spacing, consistent color scheme appropriate for the business type.\n- Every page must include: a header/hero section with the business name and tagline, a features/services section with at least 3 items, a short about section, and a footer with contact info.\n- Use semantic HTML (header, nav, main, section, footer).\n- Make it visually appealing with colors, padding, and layout.\n- Keep it under 200 lines of HTML.\n- No JavaScript required. No images (use CSS backgrounds or emoji/unicode icons instead).\n- The design should feel professional and appropriate for the specific business type.",
+  "training_prompts": [
+    "Create a landing page for a yoga studio called \"Serenity Flow\" in Portland, Oregon. They offer hot yoga, vinyasa flow, and meditation classes. Monthly unlimited pass is $89. Tagline: \"Find your balance.\" Use calming earth tones (sage green, warm beige). They have 3 instructors and are open 7 days a week, 6am-9pm.",
+
+    "Create a landing page for a pet grooming business called \"Paws & Shine\" in Austin, Texas. Services: bath & brush ($35), full groom ($65), nail trim ($15), teeth cleaning ($25). Tagline: \"Where every pet leaves happy.\" Use playful, warm colors (orange accents, soft cream background). Open Mon-Sat 8am-6pm. Phone: (512) 555-0177.",
+
+    "Create a landing page for a law firm called \"Morrison & Associates\" specializing in family law and estate planning. Located at 200 Legal Center Dr, Chicago, IL. Tagline: \"Trusted counsel for life's important moments.\" Use professional dark blue and gold color scheme. Free initial consultation offered. 3 partners, practicing since 2001.",
+
+    "Create a landing page for a fitness gym called \"IronCore Fitness\" in Denver, Colorado. They offer strength training, HIIT classes, personal training, and nutrition coaching. Membership: $49/month basic, $79/month premium. Tagline: \"Stronger every day.\" Use bold, energetic colors (black, red accents, dark gray). Open 24/7. Address: 1500 Muscle Blvd.",
+
+    "Create a landing page for a children's daycare called \"Little Explorers Academy\" in suburban Atlanta. Ages 6 months to 5 years. Programs: infant care, toddler program, pre-K readiness. Tagline: \"Where curiosity grows.\" Use bright, cheerful colors (sky blue, sunshine yellow, soft green). Licensed and accredited. Staff ratio 1:4. Hours: 6:30am-6:30pm.",
+
+    "Create a landing page for a dental clinic called \"Bright Smile Dental\" in San Diego. Services: cleanings, whitening, implants, orthodontics, emergency dental. Tagline: \"Your smile, our priority.\" Use clean white and light blue color scheme with a touch of mint green. Accepting new patients. Insurance accepted. Dr. Sarah Kim, DDS, 15 years experience.",
+
+    "Create a landing page for a coffee roastery called \"Ember & Bean\" in Seattle. They sell single-origin beans from Ethiopia, Colombia, and Guatemala. Roast levels: light, medium, dark. Subscription plans: 12oz bag monthly ($18), bi-weekly ($32). Tagline: \"Roasted with intention.\" Use rich brown, cream, and burnt orange colors. Café hours: 7am-5pm daily.",
+
+    "Create a landing page for an auto repair shop called \"TrustWrench Automotive\" in Houston, Texas. Services: oil changes ($39.99), brake repair, engine diagnostics, tire rotation, AC service. Tagline: \"Honest repairs, fair prices.\" Use industrial colors (navy blue, steel gray, yellow accents). ASE-certified mechanics. Family-owned since 1998. Free estimates.",
+
+    "Create a landing page for a photography studio called \"Captured Moments\" in Nashville. Specialties: weddings ($2,500-$5,000), portraits ($200/session), corporate headshots ($150), event photography. Tagline: \"Your story, beautifully told.\" Use elegant dark theme with gold accents and warm highlights. Portfolio of 500+ events. Lead photographer: Maria Chen.",
+
+    "Create a landing page for a tutoring center called \"BrightPath Learning\" in Boston. Subjects: math, science, English, SAT/ACT prep, college admissions counseling. For ages 10-18. Tagline: \"Unlock your potential.\" Use academic colors (navy, white, with green accents). 95% of students improve by one letter grade. One-on-one and small group sessions.",
+
+    "Create a landing page for a bakery called \"Sugar & Flour\" in San Francisco. Specialties: sourdough bread, croissants, custom cakes, macarons, seasonal pastries. Tagline: \"Baked fresh, made with love.\" Use warm pastel colors (soft pink, cream, light gold). Open Tue-Sun 7am-3pm. All ingredients locally sourced. Catering available for events up to 200 people.",
+
+    "Create a landing page for a landscaping company called \"GreenScape Solutions\" in Phoenix, Arizona. Services: lawn maintenance ($45/visit), landscape design, irrigation installation, tree trimming, hardscaping. Tagline: \"Transforming outdoor spaces.\" Use natural green and earthy brown tones. Licensed and insured. Serving the Valley since 2010. Free on-site consultations.",
+
+    "Create a landing page for a music school called \"Harmony House\" in Nashville, Tennessee. Instruments taught: piano, guitar, violin, drums, voice. Ages 5 to adult. Tagline: \"Where music begins.\" Use creative, artistic colors (deep purple, gold, off-white). Lessons: $40/30min, $65/60min. Recitals twice a year. 12 instructors with conservatory backgrounds.",
+
+    "Create a landing page for a veterinary clinic called \"Compassionate Paws Vet\" in Portland, Oregon. Services: wellness exams, vaccinations, surgery, dental care, emergency services. Tagline: \"Caring for your family member.\" Use calming teal and white with warm accents. Dr. James Rivera, DVM, 20 years experience. Open Mon-Fri 8am-7pm, Sat 9am-3pm. Emergency line: (503) 555-0199.",
+
+    "Create a landing page for a coworking space called \"The Hive Workspace\" in downtown Denver. Plans: hot desk ($199/mo), dedicated desk ($349/mo), private office ($599/mo). Amenities: high-speed WiFi, meeting rooms, coffee bar, printer, phone booths, rooftop terrace. Tagline: \"Work better, together.\" Use modern, minimal design with white, light gray, and orange accent. 24/7 keycard access.",
+
+    "Create a landing page for a florist called \"Bloom & Wild\" in Charleston, South Carolina. Services: custom bouquets ($45-$120), wedding flowers, funeral arrangements, weekly office delivery, plant subscriptions. Tagline: \"Nature's beauty, arranged.\" Use romantic colors (dusty rose, sage green, cream). Same-day delivery available. Family-owned for 30 years.",
+
+    "Create a landing page for an accounting firm called \"ClearBooks Financial\" in Atlanta, Georgia. Services: tax preparation (individual & business), bookkeeping, payroll processing, financial consulting, audit support. Tagline: \"Clarity in every number.\" Use trustworthy blue and white with subtle green accents. CPA-certified team of 8. Serving small businesses since 2005.",
+
+    "Create a landing page for a martial arts dojo called \"Dragon Spirit Academy\" in Los Angeles. Disciplines: karate, jiu-jitsu, muay thai, kids' self-defense. Tagline: \"Discipline. Strength. Honor.\" Use bold colors (black, red, gold). Classes for ages 4+. Head instructor: Sensei Tanaka, 5th dan black belt. First class free. Competition team available."
+  ],
+  "test_prompts": [
+    "Create a landing page for a bank called \"Meridian National Bank\" founded in 1952. Services: checking & savings accounts, mortgages, auto loans, business banking, wealth management. Tagline: \"Banking you can trust, since 1952.\" Use trustworthy, conservative colors (dark navy, white, gold accents). FDIC insured. 12 branch locations across the Northeast. 24/7 online banking and mobile app. CEO: Robert Chambers.",
+
+    "Create a landing page for a farm-to-table restaurant called \"Harvest & Vine\" in Napa Valley, California. Cuisine: seasonal American with Mediterranean influences. Chef: Isabella Torres, James Beard nominee. Tasting menu: $95/person. À la carte entrées: $28-$45. Wine list: 200+ selections. Tagline: \"From our farm to your table.\" Use warm, earthy tones (terracotta, olive green, cream). Open Wed-Sun for dinner, 5:30-10pm. Reservations recommended. Private dining room available for events up to 40 guests.",
+
+    "Create a landing page for a tech startup called \"NeuralPath AI\" based in San Francisco. They build AI-powered document processing tools for enterprise. Products: DocScan (automated data extraction), FlowEngine (workflow automation), InsightAPI (analytics integration). Series A funded, $12M raised. Tagline: \"Intelligence at the speed of business.\" Use modern tech aesthetic (dark background, electric blue and cyan accents, clean sans-serif typography). 50+ enterprise clients. SOC 2 compliant. Founded 2023."
+  ]
+}

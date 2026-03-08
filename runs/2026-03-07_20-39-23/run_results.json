@@ -1,0 +1,63 @@
+{
+  "run_id": "2026-03-07_20-39-23",
+  "run_dir": "runs/2026-03-07_20-39-23",
+  "paths": {
+    "root": "runs/2026-03-07_20-39-23",
+    "data": "runs/2026-03-07_20-39-23/data",
+    "adapters": "runs/2026-03-07_20-39-23/adapters",
+    "outputs_before": "runs/2026-03-07_20-39-23/outputs/before",
+    "outputs_after": "runs/2026-03-07_20-39-23/outputs/after",
+    "outputs_teacher": "runs/2026-03-07_20-39-23/outputs/teacher",
+    "teacher_data": "runs/2026-03-07_20-39-23/teacher_data.jsonl",
+    "train_data": "runs/2026-03-07_20-39-23/data/train.jsonl",
+    "valid_data": "runs/2026-03-07_20-39-23/data/valid.jsonl",
+    "lora_config": "runs/2026-03-07_20-39-23/lora_config.yaml",
+    "comparison": "runs/2026-03-07_20-39-23/outputs/comparison.html",
+    "cost_report": "runs/2026-03-07_20-39-23/cost_report.json",
+    "run_config": "runs/2026-03-07_20-39-23/run_config.json",
+    "run_results": "runs/2026-03-07_20-39-23/run_results.json"
+  },
+  "teacher_model": "claude-opus-4-6",
+  "student_model": "mlx-community/Llama-3.1-8B-Instruct-4bit",
+  "count": 3,
+  "epochs": 120,
+  "lora_rank": 64,
+  "num_layers": 16,
+  "learning_rate": 0.0002,
+  "batch_size": 1,
+  "max_tokens": 4096,
+  "cost_estimate": false,
+  "error": null,
+  "step_results": {
+    "extract_knowledge": {
+      "success": true,
+      "elapsed_seconds": 246.4,
+      "cost": {
+        "total_usd": 0.2487,
+        "input_tokens": 1023,
+        "output_tokens": 9743,
+        "examples": 3
+      },
+      "examples": 3
+    },
+    "eval_baseline": {
+      "success": true,
+      "elapsed_seconds": 75.1
+    },
+    "adapt_model": {
+      "success": true,
+      "elapsed_seconds": 1570.8
+    },
+    "eval_adapted": {
+      "success": true,
+      "elapsed_seconds": 159.1
+    },
+    "benchmark": {
+      "success": true,
+      "elapsed_seconds": 0.0
+    }
+  },
+  "current_step": "benchmark",
+  "finished_at": "2026-03-07T21:13:35.405270",
+  "total_elapsed_seconds": 2051.5
+}

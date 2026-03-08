@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuralPath AI — Intelligence at the speed of business.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1a;color:#c8d1e0;line-height:1.7;}
+  a{color:#00d4ff;text-decoration:none;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 5%;max-width:1200px;margin:auto;}
+  .logo{font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:-0.5px;}
+  .logo span{color:#00d4ff;}
+  nav ul{display:flex;list-style:none;gap:2rem;}
+  nav ul li a{color:#8892a8;font-size:.95rem;transition:color .3s;}
+  nav ul li a:hover{color:#00d4ff;}
+  .btn{background:linear-gradient(135deg,#0066ff,#00d4ff);color:#fff;padding:.7rem 1.8rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .3s;display:inline-block;}
+  .btn:hover{opacity:.85;color:#fff;}
+  .btn-outline{background:transparent;border:1.5px solid #1e2a4a;color:#00d4ff;}
+  .btn-outline:hover{border-color:#00d4ff;background:rgba(0,212,255,.06);}
+
+  header{text-align:center;padding:6rem 5% 4rem;max-width:900px;margin:auto;}
+  header .badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:#00d4ff;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.5rem;letter-spacing:.5px;}
+  header h1{font-size:3.4rem;color:#fff;line-height:1.15;font-weight:800;letter-spacing:-1.5px;margin-bottom:1.2rem;}
+  header h1 span{background:linear-gradient(135deg,#0066ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  header p{font-size:1.2rem;color:#7a86a1;max-width:620px;margin:0 auto 2.5rem;}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+
+  .stats{display:flex;justify-content:center;gap:4rem;padding:2rem 5% 5rem;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .num{font-size:2rem;font-weight:800;color:#fff;}
+  .stat .num span{color:#00d4ff;}
+  .stat .label{font-size:.85rem;color:#5a6480;margin-top:.2rem;}
+
+  section{padding:5rem 5%;max-width:1100px;margin:auto;}
+  .section-title{text-align:center;margin-bottom:3rem;}
+  .section-title h2{font-size:2.2rem;color:#fff;font-weight:700;letter-spacing:-.5px;}
+  .section-title p{color:#5f6b85;margin-top:.5rem;font-size:1.05rem;}
+
+  .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;}
+  .card{background:linear-gradient(145deg,#111827,#0f1525);border:1px solid #1a2240;border-radius:16px;padding:2.2rem;transition:border-color .3s,transform .3s;}
+  .card:hover{border-color:#0066ff;transform:translateY(-4px);}
+  .card .icon{font-size:2.2rem;margin-bottom:1rem;display:inline-block;width:56px;height:56px;line-height:56px;text-align:center;background:rgba(0,102,255,.12);border-radius:14px;}
+  .card h3{color:#fff;font-size:1.25rem;margin-bottom:.6rem;}
+  .card p{color:#6b7a96;font-size:.95rem;line-height:1.65;}
+
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+  .about-text h2{font-size:2rem;color:#fff;font-weight:700;margin-bottom:1rem;letter-spacing:-.5px;}
+  .about-text p{color:#6b7a96;margin-bottom:1rem;font-size:1rem;}
+  .trust-badges{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+  .trust-badge{background:#111827;border:1px solid #1a2240;padding:.8rem 1.2rem;border-radius:12px;font-size:.85rem;color:#8892a8;display:flex;align-items:center;gap:.5rem;}
+  .trust-badge .tb-icon{font-size:1.1rem;}
+  .about-visual{background:linear-gradient(145deg,#0d1424,#111c35);border:1px solid #1a2240;border-radius:20px;height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .about-visual::before{content:'';position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(0,102,255,.25),transparent 70%);border-radius:50%;top:20%;left:20%;}
+  .about-visual::after{content:'';position:absolute;width:150px;height:150px;background:radial-gradient(circle,rgba(0,212,255,.2),transparent 70%);border-radius:50%;bottom:15%;right:20%;}
+  .about-visual span{font-size:4rem;position:relative;z-index:1;}
+
+  footer{border-top:1px solid #141c30;margin-top:4rem;padding:3rem 5%;text-align:center;}
+  .footer-inner{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  footer p{color:#3d475e;font-size:.85rem;}
+  .footer-links{display:flex;gap:1.5rem;}
+  .footer-links a{color:#4f5b75;font-size:.85rem;transition:color .3s;}
+  .footer-links a:hover{color:#00d4ff;}
+
+  @media(max-width:768px){
+    header h1{font-size:2.2rem;}
+    .about-grid{grid-template-columns:1fr;}
+    .stats{gap:2rem;}
+    nav ul{display:none;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Neural<span>Path</span> AI</div>
+  <ul>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="btn">Get a Demo</a>
+</nav>
+
+<header>
+  <div class="badge">🚀 SERIES A — $12M RAISED</div>
+  <h1>Intelligence at the <span>speed of business.</span></h1>
+  <p>NeuralPath AI builds enterprise-grade document processing tools powered by cutting-edge artificial intelligence. Extract, automate, and analyze — all in one platform.</p>
+  <div class="hero-btns">
+    <a href="#products" class="btn">Explore Products</a>
+    <a href="#about" class="btn btn-outline">Learn More →</a>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="num">50<span>+</span></div><div class="label">Enterprise Clients</div></div>
+  <div class="stat"><div class="num"><span>$</span>12M</div><div class="label">Series A Funding</div></div>
+  <div class="stat"><div class="num">99.7<span>%</span></div><div class="label">Extraction Accuracy</div></div>
+  <div class="stat"><div class="num">SOC 2</div><div class="label">Compliant</div></div>
+</div>
+
+<section id="products">
+  <div class="section-title">
+    <h2>Our Products</h2>
+    <p>Three powerful tools. One intelligent platform.</p>
+  </div>
+  <div class="products">
+    <div class="card">
+      <div class="icon">📄</div>
+      <h3>DocScan</h3>
+      <p>Automated data extraction from invoices, contracts, and forms. Our AI reads, classifies, and structures unstructured documents in seconds — not hours.</p>
+    </div>
+    <div class="card">
+      <div class="icon">⚙️</div>
+      <h3>FlowEngine</h3>
+      <p>End-to-end workflow automation that routes documents, triggers approvals, and connects to your existing systems. Build intelligent pipelines with zero code.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h3>InsightAPI</h3>
+      <p>Analytics integration that transforms extracted data into actionable intelligence. RESTful APIs and real-time dashboards for every team in your organization.</p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text">
+      <h2>Built for enterprise. Powered by AI.</h2>
+      <p>Founded in 2023 in San Francisco, NeuralPath AI was created to solve the bottleneck every enterprise faces: mountains of documents and not enough time. Our team of AI researchers and enterprise engineers is building the future of intelligent document processing.</p>
+      <p>Backed by $12M in Series A funding, we serve over 50 enterprise clients across finance, healthcare, logistics, and legal — helping them move faster, reduce errors, and unlock hidden value in their data.</p>
+      <div class="trust-badges">
+        <div class="trust-badge"><span class="tb-icon">🔒</span> SOC 2 Compliant</div>
+        <div class="trust-badge"><span class="tb-icon">🏢</span> Enterprise SLA</div>
+        <div class="trust-badge"><span class="tb-icon">🌐</span> 99.9% Uptime</div>
+      </div>
+    </div>
+    <div class="about-visual"><span>🧠</span></div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="footer-inner">
+    <p>© 2024 NeuralPath AI, Inc. · San Francisco, CA · hello@neuralpath.ai</p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Security</a>
+      <a href="#">Careers</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

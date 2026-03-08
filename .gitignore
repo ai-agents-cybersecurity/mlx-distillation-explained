@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+
+# Runs (keep comparison.html for demo purposes)
+runs/adapters/*
+!runs/adapters/.gitkeep
+!runs/**/comparison.html

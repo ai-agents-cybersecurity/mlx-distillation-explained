@@ -1,0 +1,30 @@
+{
+  "model": "claude-opus-4-6",
+  "backend": "Anthropic API",
+  "total_input_tokens": 1023,
+  "total_output_tokens": 9743,
+  "total_tokens": 10766,
+  "total_cost_usd": 0.2487,
+  "avg_cost_per_example_usd": 0.0829,
+  "examples_generated": 3,
+  "per_request": [
+    {
+      "prompt_index": 0,
+      "input_tokens": 343,
+      "output_tokens": 3613,
+      "cost_usd": 0.09204
+    },
+    {
+      "prompt_index": 1,
+      "input_tokens": 351,
+      "output_tokens": 2724,
+      "cost_usd": 0.069855
+    },
+    {
+      "prompt_index": 2,
+      "input_tokens": 329,
+      "output_tokens": 3406,
+      "cost_usd": 0.086795
+    }
+  ]
+}

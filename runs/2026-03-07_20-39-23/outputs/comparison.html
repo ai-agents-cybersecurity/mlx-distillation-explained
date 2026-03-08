@@ -1,0 +1,2871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distillation Demo — 2026-03-07_20-39-23</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e0e0e0; }
+.header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 24px 32px;
+  border-bottom: 1px solid #333;
+}
+.header h1 { font-size: 1.5rem; color: #fff; margin-bottom: 4px; }
+.header p { color: #888; font-size: 0.9rem; }
+.summary-bar {
+  display: flex; gap: 24px; padding: 12px 32px;
+  background: #151520; border-bottom: 1px solid #333;
+  font-size: 0.85rem; flex-wrap: wrap;
+}
+.summary-stat { color: #aaa; }
+.summary-stat strong { color: #fff; }
+.tabs {
+  display: flex; gap: 4px; padding: 12px 32px;
+  background: #1a1a1a; border-bottom: 1px solid #333;
+}
+.tab-btn {
+  padding: 8px 20px; background: #2a2a2a; border: 1px solid #444;
+  border-radius: 6px; color: #aaa; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+}
+.tab-btn:hover { background: #333; color: #fff; }
+.tab-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+.prompt-bar {
+  padding: 12px 32px; background: #1e1e1e;
+  border-bottom: 1px solid #333; font-size: 0.85rem; color: #ccc;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.prompt-left { flex: 1; }
+.prompt-bar .metrics { margin-top: 4px; font-size: 0.8rem; color: #888; }
+.view-toggle { display: flex; gap: 2px; }
+.toggle-btn {
+  padding: 5px 14px; background: #2a2a2a; border: 1px solid #444;
+  color: #aaa; cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+}
+.toggle-btn:first-child { border-radius: 4px 0 0 4px; }
+.toggle-btn:last-child { border-radius: 0 4px 4px 0; }
+.toggle-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+.comparison { display: flex; height: calc(100vh - 260px); gap: 2px; background: #333; }
+.panel { flex: 1; display: flex; flex-direction: column; background: #1a1a2e; overflow: hidden; }
+.panel-header {
+  padding: 10px 16px; font-size: 0.85rem; font-weight: 600;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.panel-header.before { background: #2d1b1b; color: #fca5a5; border-bottom: 2px solid #ef4444; }
+.panel-header.after { background: #1b2d1b; color: #86efac; border-bottom: 2px solid #22c55e; }
+.panel-header.teacher { background: #1b1b2d; color: #93c5fd; border-bottom: 2px solid #3b82f6; }
+.panel-header .score { font-weight: 400; font-size: 0.8rem; }
+.badge-bar { padding: 6px 12px; display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; background: #12121e; }
+.badge {
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 500;
+  white-space: nowrap;
+}
+.panel-content {
+  flex: 1; overflow: hidden; position: relative;
+}
+.preview-frame {
+  width: 100%; height: 100%; border: none; background: #fff;
+}
+.code-view {
+  width: 100%; height: 100%; overflow: auto; margin: 0;
+  padding: 12px 16px; background: #0d0d1a;
+  font-size: 0.75rem; line-height: 1.5;
+}
+.code-view code {
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  color: #c9d1d9; white-space: pre-wrap; word-break: break-all;
+}
+.tab-panel { flex-direction: column; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Distillation Demo — Landing Page Generation</h1>
+  <p>Run: 2026-03-07_20-39-23 | Llama-3.1-8B-Instruct-4bit — Base vs Distilled vs claude-opus-4-6 Teacher</p>
+</div>
+<div class="summary-bar">
+  <span class="summary-stat">Base Avg: <strong>87</strong></span>
+  <span class="summary-stat">Distilled Avg: <strong>97</strong> (++10)</span>
+  <span class='summary-stat'>Teacher Avg: <strong>96</strong></span>
+  <span class="summary-stat">Renderable: <strong>3 → 3 → 3 / 3</strong></span>
+  <span class="summary-stat">Has CSS: <strong>3 → 3 → 3 / 3</strong></span>
+  <span class="summary-stat">Tests: <strong>3</strong></span>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="showTab(1)" id="tab-btn-1">Meridian National Bank</button>
+<button class="tab-btn " onclick="showTab(2)" id="tab-btn-2">Harvest &amp; Vine</button>
+<button class="tab-btn " onclick="showTab(3)" id="tab-btn-3">NeuralPath AI</button>
+
+</div>
+
+<div class="tab-panel" id="tab-panel-1" style="display: flex">
+  <div class="prompt-bar">
+    <div class="prompt-left">
+      <strong>Test 1:</strong> Meridian National Bank
+      <div class="metrics">Score: 93 → 97 (<span style="color:#22c55e">+4</span>) &nbsp;|&nbsp; Teacher: 92 &nbsp;|&nbsp; Size: 2,409 → 8,033 chars</div>
+    </div>
+    <div class="view-toggle">
+      <button class="toggle-btn active" onclick="setView(1, 'preview')">Preview</button>
+      <button class="toggle-btn" onclick="setView(1, 'code')">Code</button>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="panel">
+      <div class="panel-header before">
+        <span>Llama-3.1-8B-Instruct-4bit — Base</span>
+        <span class="score">Score: 93/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 15 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">32 tags</span> </div>
+      <div class="panel-content" id="panel-1-before">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+header {
+  background-color: #032B44;
+  color: #FFFFFF;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 36px;
+  margin: 0;
+}
+
+header p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.feature {
+  background-color: #FFFFFF;
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 20px;
+  width: 200px;
+}
+
+.feature h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.feature p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.about {
+  padding: 20px;
+}
+
+.about h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.about p {
+  font-size: 18px;
+  margin: 0;
+}
+
+footer {
+  background-color: #032B44;
+  color: #FFFFFF;
+  clear: both;
+  padding: 10px;
+  text-align: center;
+}
+
+footer p {
+  font-size: 18px;
+  margin: 0;
+}
+
+footer a {
+  color: #FFD700;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #FFC400;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Meridian National Bank</h1>
+  <p>Banking you can trust, since 1952.</p>
+</header>
+<main>
+  <section class=&quot;features&quot;>
+    <div class=&quot;feature&quot;>
+      <h2>Checking &amp; Savings Accounts</h2>
+      <p>Personalized banking solutions for your everyday needs.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>Mortgages</h2>
+      <p>Competitive rates and expert guidance for your home loan.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>Auto Loans</h2>
+      <p>Low rates and flexible terms for your next vehicle.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>Business Banking</h2>
+      <p>Customized solutions for your business's financial needs.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>Wealth Management</h2>
+      <p>Expert advice and investment strategies for your future.</p>
+    </div>
+  </section>
+  <section class=&quot;about&quot;>
+    <h2>About Us</h2>
+    <p>Founded in 1952, Meridian National Bank has grown to 12 branch locations across the Northeast. Our commitment to community and customer service has earned us a reputation as a trusted financial partner.</p>
+  </section>
+  <footer>
+    <p>FDIC Insured | 24/7 Online Banking and Mobile App | 12 Branch Locations Across the Northeast</p>
+    <p>CEO: Robert Chambers</p>
+    <p>Phone: 555-555-5555 | Email: <a href=&quot;mailto:info@meridianbank.com&quot;>info@meridianbank.com</a></p>
+  </footer>
+</main>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+header {
+  background-color: #032B44;
+  color: #FFFFFF;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 36px;
+  margin: 0;
+}
+
+header p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.feature {
+  background-color: #FFFFFF;
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 20px;
+  width: 200px;
+}
+
+.feature h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.feature p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.about {
+  padding: 20px;
+}
+
+.about h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.about p {
+  font-size: 18px;
+  margin: 0;
+}
+
+footer {
+  background-color: #032B44;
+  color: #FFFFFF;
+  clear: both;
+  padding: 10px;
+  text-align: center;
+}
+
+footer p {
+  font-size: 18px;
+  margin: 0;
+}
+
+footer a {
+  color: #FFD700;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #FFC400;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;
+  &lt;h1&gt;Meridian National Bank&lt;/h1&gt;
+  &lt;p&gt;Banking you can trust, since 1952.&lt;/p&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section class=&quot;features&quot;&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;Checking &amp; Savings Accounts&lt;/h2&gt;
+      &lt;p&gt;Personalized banking solutions for your everyday needs.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;Mortgages&lt;/h2&gt;
+      &lt;p&gt;Competitive rates and expert guidance for your home loan.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;Auto Loans&lt;/h2&gt;
+      &lt;p&gt;Low rates and flexible terms for your next vehicle.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;Business Banking&lt;/h2&gt;
+      &lt;p&gt;Customized solutions for your business&#x27;s financial needs.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;Wealth Management&lt;/h2&gt;
+      &lt;p&gt;Expert advice and investment strategies for your future.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section class=&quot;about&quot;&gt;
+    &lt;h2&gt;About Us&lt;/h2&gt;
+    &lt;p&gt;Founded in 1952, Meridian National Bank has grown to 12 branch locations across the Northeast. Our commitment to community and customer service has earned us a reputation as a trusted financial partner.&lt;/p&gt;
+  &lt;/section&gt;
+  &lt;footer&gt;
+    &lt;p&gt;FDIC Insured | 24/7 Online Banking and Mobile App | 12 Branch Locations Across the Northeast&lt;/p&gt;
+    &lt;p&gt;CEO: Robert Chambers&lt;/p&gt;
+    &lt;p&gt;Phone: 555-555-5555 | Email: &lt;a href=&quot;mailto:info@meridianbank.com&quot;&gt;info@meridianbank.com&lt;/a&gt;&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header after">
+        <span>Llama-3.1-8B-Instruct-4bit — Distilled</span>
+        <span class="score">Score: 97/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 48 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">82 tags</span> </div>
+      <div class="panel-content" id="panel-1-after">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>Miridian National Bank | Banking You Can Trust</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #2c2c2c; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav.logo { color: #c9a84c; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #d4d4d4; text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #162a50 50%, #1a3366 100%); color: #fff; text-align: center; padding: 100px 20px 90px; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  .hero h1 { font-size: 3rem; letter-spacing: 2px; margin-bottom: 8px; color: #c9a84c; }
+  .hero.ampersand { color: #e8d48b; }
+  .hero.tagline { font-size: 1.35rem; font-style: italic; color: #c0cfe0; margin-bottom: 30px; }
+  .hero.cta { display: inline-block; background: #c9a84c; color: #0a1628; padding: 16px 40px; text-decoration: none; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; border: 2px solid #c9a84c; transition: all 0.3s; }
+  .hero.cta:hover { background: transparent; color: #c9a84c; }
+  .hero.symbol { font-size: 2.5rem; margin-bottom: 15px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; color: #0a1628; margin-bottom: 10px; }
+  .section-title span { color: #c9a84c; }
+  .section-divider { width: 60px; height: 3px; background: #c9a84c; margin: 0 auto 50px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+  .service-card { background: #f7f8fa; border-top: 4px solid #c9a84c; padding: 35px 28px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(10,22,40,0.12); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 15px; }
+  .service-card h3 { color: #0a1628; font-size: 1.25rem; margin-bottom: 12px; }
+  .service-card p { color: #555; font-size: 0.95rem; font-family: 'Segoe UI', Arial, sans-serif; }
+  .about-section { background: #0a1628; color: #d4d4d4; padding: 70px 40px; }
+  .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about-inner h2 { color: #c9a84c; font-size: 2rem; margin-bottom: 20px; }
+  .about-inner p { line-height: 1.9; font-size: 1.02rem; }
+  .stats { display: flex; gap: 40px; margin-top: 30px; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #c9a84c; font-weight: bold; }
+  .stat.label { font-size: 0.85rem; color: #8fa8c8; font-family: 'Segoe UI', Arial, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #c9a84c, #dbb850); text-align: center; padding: 50px 20px; }
+  .cta-banner h2 { color: #0a1628; font-size: 1.8rem; margin-bottom: 10px; }
+  .cta-banner p { color: #2c3e1e; font-size: 1.05rem; margin-bottom: 25px; font-family: 'Segoe UI', Arial, sans-serif; }
+  .cta-banner a { background: #0a1628; color: #c9a84c; padding: 14px 36px; text-decoration: none; font-weight: bold; font-size: 1rem; letter-spacing: 1px; border: 2px solid #0a1628; transition: all 0.3s; }
+  .cta-banner a:hover { background: transparent; color: #0a1628; }
+  footer { background: #060e1a; color: #8fa8c8; padding: 40px 40px 30px; font-family: 'Segoe UI', Arial, sans-serif; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+  .footer-col h4 { color: #c9a84c; margin-bottom: 12px; font-family: Georgia, serif; }
+  .footer-col p,.footer-col a { font-size: 0.9rem; color: #8fa8c8; text-decoration: none; line-height: 2; }
+  .footer-col a:hover { color: #c9a84c; }
+  .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a2a40; font-size: 0.85rem; color: #5a7090; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-inner { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 15px; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class=&quot;logo&quot;>Meridian National Bank</div>
+  <ul>
+    <li><a href=&quot;#services&quot;>Services</a></li>
+    <li><a href=&quot;#about&quot;>About</a></li>
+    <li><a href=&quot;#contact&quot;>Contact</a></li>
+  </ul>
+</nav>
+<header class=&quot;hero&quot;>
+  <h1>Miridian National Bank</h1>
+  <span class=&quot;ampersand&quot;>&amp;</span>
+  <p class=&quot;tagline&quot;>Banking you can trust, since 1952.</p>
+  <a href=&quot;#contact&quot; class=&quot;cta&quot;>Start Banking Today</a>
+  <span class=&quot;symbol&quot;>🏛️</span>
+</header>
+<main>
+  <section id=&quot;services&quot;>
+    <h2 class=&quot;section-title&quot;>Our <span>Services</span></h2>
+    <div class=&quot;section-divider&quot;></div>
+    <div class=&quot;services-grid&quot;>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>🏠</div>
+        <h3>Checking &amp; Savings Accounts</h3>
+        <p>Full-service checking and savings accounts with competitive rates and no fees.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>🛁</div>
+        <h3>Mortgages</h3>
+        <p>Competitive mortgage rates and terms to fit your budget.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>🚗</div>
+        <h3>Auto Loans</h3>
+        <p>Low-interest auto loans with flexible terms and no hidden fees.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>🏢</div>
+        <h3>Business Banking</h3>
+        <p>Full-service banking for businesses of all sizes.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>📜</div>
+        <h3>Wealth Management</h3>
+        <p>Comprehensive wealth management services to protect and grow your assets.</p>
+      </div>
+    </div>
+  </section>
+  <section id=&quot;about&quot;>
+    <h2 class=&quot;section-title&quot;>About Meridian National Bank</h2>
+    <div class=&quot;section-divider&quot;></div>
+    <div class=&quot;about-section&quot;>
+      <div class=&quot;about-inner&quot;>
+        <div>
+          <h2>Mission Statement</h2>
+          <p>Meridian National Bank has been serving the Northeast since 1952. Our mission is to provide exceptional banking services with a personal touch.</p>
+        </div>
+        <div>
+          <h2>CEO</h2>
+          <p>Robert Chambers</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class=&quot;cta-banner&quot;>
+    <h2>Your First Visit</h2>
+    <p>Take the first step. Visit us today and experience the Meridian National Bank difference.</p>
+    <a href=&quot;tel:1(800)555-0177&quot;>Call (800) 555-0177</a>
+  </div>
+</main>
+<footer id=&quot;contact&quot;>
+  <div class=&quot;footer-inner&quot;>
+    <div class=&quot;footer-col&quot;>
+      <h4>Branch Locations</h4>
+      <p>12 branch locations across the Northeast. Find your nearest branch or ATM.</p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>Online Banking</h4>
+      <p>24/7 online banking and mobile app. Manage your accounts, transfer funds, and pay bills from anywhere.</p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>FDIC Insured</h4>
+      <p>Your deposits are insured up to $250,000. For more information, visit the FDIC website.</p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>Contact Us</h4>
+      <p>Phone: <a href=&quot;tel:1(800)555-0177&quot;>1 (800) 555-0177</a><br>Email: <a href=&quot;mailto:info@meridianbank.com&quot;>info@meridianbank.com</a></p>
+    </div>
+  </div>
+  <div class=&quot;footer-bottom&quot;>
+    <p>© 2024 Meridian National Bank. All rights reserved. FDIC Insured. Equal Housing Lender.</p>
+  </div>
+</footer>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Miridian National Bank | Banking You Can Trust&lt;/title&gt;
+&lt;style&gt;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: &#x27;Georgia&#x27;, &#x27;Times New Roman&#x27;, serif; color: #2c2c2c; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav.logo { color: #c9a84c; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #d4d4d4; text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #162a50 50%, #1a3366 100%); color: #fff; text-align: center; padding: 100px 20px 90px; position: relative; }
+  .hero::after { content: &#x27;&#x27;; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  .hero h1 { font-size: 3rem; letter-spacing: 2px; margin-bottom: 8px; color: #c9a84c; }
+  .hero.ampersand { color: #e8d48b; }
+  .hero.tagline { font-size: 1.35rem; font-style: italic; color: #c0cfe0; margin-bottom: 30px; }
+  .hero.cta { display: inline-block; background: #c9a84c; color: #0a1628; padding: 16px 40px; text-decoration: none; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; border: 2px solid #c9a84c; transition: all 0.3s; }
+  .hero.cta:hover { background: transparent; color: #c9a84c; }
+  .hero.symbol { font-size: 2.5rem; margin-bottom: 15px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; color: #0a1628; margin-bottom: 10px; }
+  .section-title span { color: #c9a84c; }
+  .section-divider { width: 60px; height: 3px; background: #c9a84c; margin: 0 auto 50px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+  .service-card { background: #f7f8fa; border-top: 4px solid #c9a84c; padding: 35px 28px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(10,22,40,0.12); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 15px; }
+  .service-card h3 { color: #0a1628; font-size: 1.25rem; margin-bottom: 12px; }
+  .service-card p { color: #555; font-size: 0.95rem; font-family: &#x27;Segoe UI&#x27;, Arial, sans-serif; }
+  .about-section { background: #0a1628; color: #d4d4d4; padding: 70px 40px; }
+  .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about-inner h2 { color: #c9a84c; font-size: 2rem; margin-bottom: 20px; }
+  .about-inner p { line-height: 1.9; font-size: 1.02rem; }
+  .stats { display: flex; gap: 40px; margin-top: 30px; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #c9a84c; font-weight: bold; }
+  .stat.label { font-size: 0.85rem; color: #8fa8c8; font-family: &#x27;Segoe UI&#x27;, Arial, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #c9a84c, #dbb850); text-align: center; padding: 50px 20px; }
+  .cta-banner h2 { color: #0a1628; font-size: 1.8rem; margin-bottom: 10px; }
+  .cta-banner p { color: #2c3e1e; font-size: 1.05rem; margin-bottom: 25px; font-family: &#x27;Segoe UI&#x27;, Arial, sans-serif; }
+  .cta-banner a { background: #0a1628; color: #c9a84c; padding: 14px 36px; text-decoration: none; font-weight: bold; font-size: 1rem; letter-spacing: 1px; border: 2px solid #0a1628; transition: all 0.3s; }
+  .cta-banner a:hover { background: transparent; color: #0a1628; }
+  footer { background: #060e1a; color: #8fa8c8; padding: 40px 40px 30px; font-family: &#x27;Segoe UI&#x27;, Arial, sans-serif; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+  .footer-col h4 { color: #c9a84c; margin-bottom: 12px; font-family: Georgia, serif; }
+  .footer-col p,.footer-col a { font-size: 0.9rem; color: #8fa8c8; text-decoration: none; line-height: 2; }
+  .footer-col a:hover { color: #c9a84c; }
+  .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a2a40; font-size: 0.85rem; color: #5a7090; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-inner { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 15px; }
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;div class=&quot;logo&quot;&gt;Meridian National Bank&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#about&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#contact&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;header class=&quot;hero&quot;&gt;
+  &lt;h1&gt;Miridian National Bank&lt;/h1&gt;
+  &lt;span class=&quot;ampersand&quot;&gt;&amp;&lt;/span&gt;
+  &lt;p class=&quot;tagline&quot;&gt;Banking you can trust, since 1952.&lt;/p&gt;
+  &lt;a href=&quot;#contact&quot; class=&quot;cta&quot;&gt;Start Banking Today&lt;/a&gt;
+  &lt;span class=&quot;symbol&quot;&gt;🏛️&lt;/span&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id=&quot;services&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;Our &lt;span&gt;Services&lt;/span&gt;&lt;/h2&gt;
+    &lt;div class=&quot;section-divider&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;services-grid&quot;&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;🏠&lt;/div&gt;
+        &lt;h3&gt;Checking &amp; Savings Accounts&lt;/h3&gt;
+        &lt;p&gt;Full-service checking and savings accounts with competitive rates and no fees.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;🛁&lt;/div&gt;
+        &lt;h3&gt;Mortgages&lt;/h3&gt;
+        &lt;p&gt;Competitive mortgage rates and terms to fit your budget.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;🚗&lt;/div&gt;
+        &lt;h3&gt;Auto Loans&lt;/h3&gt;
+        &lt;p&gt;Low-interest auto loans with flexible terms and no hidden fees.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;🏢&lt;/div&gt;
+        &lt;h3&gt;Business Banking&lt;/h3&gt;
+        &lt;p&gt;Full-service banking for businesses of all sizes.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;📜&lt;/div&gt;
+        &lt;h3&gt;Wealth Management&lt;/h3&gt;
+        &lt;p&gt;Comprehensive wealth management services to protect and grow your assets.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section id=&quot;about&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;About Meridian National Bank&lt;/h2&gt;
+    &lt;div class=&quot;section-divider&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;about-section&quot;&gt;
+      &lt;div class=&quot;about-inner&quot;&gt;
+        &lt;div&gt;
+          &lt;h2&gt;Mission Statement&lt;/h2&gt;
+          &lt;p&gt;Meridian National Bank has been serving the Northeast since 1952. Our mission is to provide exceptional banking services with a personal touch.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;h2&gt;CEO&lt;/h2&gt;
+          &lt;p&gt;Robert Chambers&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;div class=&quot;cta-banner&quot;&gt;
+    &lt;h2&gt;Your First Visit&lt;/h2&gt;
+    &lt;p&gt;Take the first step. Visit us today and experience the Meridian National Bank difference.&lt;/p&gt;
+    &lt;a href=&quot;tel:1(800)555-0177&quot;&gt;Call (800) 555-0177&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+&lt;footer id=&quot;contact&quot;&gt;
+  &lt;div class=&quot;footer-inner&quot;&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;Branch Locations&lt;/h4&gt;
+      &lt;p&gt;12 branch locations across the Northeast. Find your nearest branch or ATM.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;Online Banking&lt;/h4&gt;
+      &lt;p&gt;24/7 online banking and mobile app. Manage your accounts, transfer funds, and pay bills from anywhere.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;FDIC Insured&lt;/h4&gt;
+      &lt;p&gt;Your deposits are insured up to $250,000. For more information, visit the FDIC website.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;Contact Us&lt;/h4&gt;
+      &lt;p&gt;Phone: &lt;a href=&quot;tel:1(800)555-0177&quot;&gt;1 (800) 555-0177&lt;/a&gt;&lt;br&gt;Email: &lt;a href=&quot;mailto:info@meridianbank.com&quot;&gt;info@meridianbank.com&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;footer-bottom&quot;&gt;
+    &lt;p&gt;© 2024 Meridian National Bank. All rights reserved. FDIC Insured. Equal Housing Lender.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header teacher">
+        <span>claude-opus-4-6</span>
+        <span class="score">Score: 92/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 52 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">116 tags</span> </div>
+      <div class="panel-content" id="panel-1-teacher">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>Meridian National Bank — Banking You Can Trust, Since 1952</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a2e; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav .logo { color: #c9a84c; font-size: 1.4rem; font-weight: bold; letter-spacing: 1px; }
+  nav .logo span { color: #ffffff; font-weight: normal; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #ccc; text-decoration: none; font-size: 0.9rem; font-family: Arial, sans-serif; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  header { background: linear-gradient(135deg, #0a1628 0%, #162d50 60%, #1a3a5c 100%); color: white; text-align: center; padding: 100px 20px 90px; position: relative; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  header h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
+  header h1 span { color: #c9a84c; }
+  header p.tagline { font-size: 1.3rem; color: #d4d4d4; margin-bottom: 30px; font-style: italic; }
+  header .cta-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  header .cta { display: inline-block; padding: 14px 36px; border-radius: 4px; text-decoration: none; font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold; transition: all 0.3s; }
+  .cta-primary { background: #c9a84c; color: #0a1628; }
+  .cta-primary:hover { background: #e8d48b; }
+  .cta-secondary { border: 2px solid #ffffff; color: #ffffff; background: transparent; }
+  .cta-secondary:hover { background: rgba(255,255,255,0.1); }
+  .trust-bar { background: #0e1f3d; color: #a0b4cc; text-align: center; padding: 14px 20px; font-family: Arial, sans-serif; font-size: 0.85rem; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .trust-bar span { display: flex; align-items: center; gap: 6px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .services { background: #f7f8fa; padding: 70px 20px; }
+  .services .inner { max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 10px; color: #0a1628; }
+  .section-subtitle { text-align: center; color: #666; font-family: Arial, sans-serif; margin-bottom: 50px; font-size: 1rem; }
+  .gold-line { width: 60px; height: 3px; background: #c9a84c; margin: 12px auto 20px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+  .service-card { background: #ffffff; padding: 35px 30px; border-radius: 6px; border: 1px solid #e0e0e0; border-top: 4px solid #c9a84c; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(10,22,40,0.1); }
+  .service-card .icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .service-card h3 { font-size: 1.2rem; color: #0a1628; margin-bottom: 10px; }
+  .service-card p { color: #555; font-family: Arial, sans-serif; font-size: 0.95rem; line-height: 1.6; }
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .about-text h2 { font-size: 2rem; color: #0a1628; margin-bottom: 8px; }
+  .about-text p { color: #444; font-family: Arial, sans-serif; font-size: 0.95rem; margin-bottom: 16px; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .stat { background: #0a1628; color: white; padding: 30px 20px; border-radius: 6px; text-align: center; }
+  .stat .number { font-size: 2.2rem; color: #c9a84c; font-weight: bold; }
+  .stat .label { font-family: Arial, sans-serif; font-size: 0.85rem; color: #a0b4cc; margin-top: 4px; }
+  footer { background: #0a1628; color: #a0b4cc; padding: 50px 40px 30px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  footer h4 { color: #c9a84c; margin-bottom: 14px; font-size: 1rem; }
+  footer p, footer li { font-family: Arial, sans-serif; font-size: 0.9rem; line-height: 2; }
+  footer ul { list-style: none; }
+  footer a { color: #a0b4cc; text-decoration: none; }
+  footer a:hover { color: #c9a84c; }
+  .footer-bottom { max-width: 1100px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid #1a3050; text-align: center; font-family: Arial, sans-serif; font-size: 0.8rem; color: #667; }
+  @media (max-width: 768px) {
+    .about { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    header h1 { font-size: 2rem; }
+    nav ul { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class=&quot;logo&quot;>MERIDIAN <span>National Bank</span></div>
+  <ul>
+    <li><a href=&quot;#services&quot;>Services</a></li>
+    <li><a href=&quot;#about&quot;>About</a></li>
+    <li><a href=&quot;#contact&quot;>Contact</a></li>
+    <li><a href=&quot;#&quot;>Online Banking</a></li>
+  </ul>
+</nav>
+<header>
+  <h1>Meridian <span>National</span> Bank</h1>
+  <p class=&quot;tagline&quot;>Banking you can trust, since 1952.</p>
+  <div class=&quot;cta-group&quot;>
+    <a href=&quot;#&quot; class=&quot;cta cta-primary&quot;>Open an Account</a>
+    <a href=&quot;#&quot; class=&quot;cta cta-secondary&quot;>Explore Services</a>
+  </div>
+</header>
+<div class=&quot;trust-bar&quot;>
+  <span>🏛️ FDIC Insured</span>
+  <span>🏦 12 Branch Locations</span>
+  <span>📱 24/7 Online &amp;amp; Mobile Banking</span>
+  <span>⭐ Trusted Since 1952</span>
+</div>
+<div class=&quot;services&quot; id=&quot;services&quot;>
+  <div class=&quot;inner&quot;>
+    <h2 class=&quot;section-title&quot;>Our Services</h2>
+    <div class=&quot;gold-line&quot;></div>
+    <p class=&quot;section-subtitle&quot;>Comprehensive financial solutions for individuals, families, and businesses.</p>
+    <div class=&quot;services-grid&quot;>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>💰</div><h3>Checking &amp;amp; Savings</h3><p>Flexible accounts with competitive rates, no hidden fees, and seamless digital access to manage your money around the clock.</p></div>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>🏠</div><h3>Mortgages</h3><p>Fixed and adjustable-rate mortgage options with personalized guidance to help you find and finance your dream home.</p></div>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>🚗</div><h3>Auto Loans</h3><p>Competitive auto financing for new and used vehicles with quick approvals and flexible repayment terms.</p></div>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>🏢</div><h3>Business Banking</h3><p>Tailored solutions for businesses of all sizes — from commercial lending and lines of credit to treasury management services.</p></div>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>📈</div><h3>Wealth Management</h3><p>Expert financial planning, investment advisory, and retirement strategies to help you build and preserve your wealth.</p></div>
+      <div class=&quot;service-card&quot;><div class=&quot;icon&quot;>📱</div><h3>Digital Banking</h3><p>24/7 online banking and our award-winning mobile app — deposit checks, transfer funds, and pay bills from anywhere.</p></div>
+    </div>
+  </div>
+</div>
+<section id=&quot;about&quot;>
+  <div class=&quot;about&quot;>
+    <div class=&quot;about-text&quot;>
+      <h2>About Meridian National Bank</h2>
+      <div class=&quot;gold-line&quot; style=&quot;margin:12px 0 20px;&quot;></div>
+      <p>Founded in 1952, Meridian National Bank has served communities across the Northeast for over seven decades. What began as a single branch built on the principles of trust, integrity, and personal service has grown into a premier regional institution with 12 locations.</p>
+      <p>Under the leadership of CEO Robert Chambers, we remain committed to the values that have guided us from the beginning — putting our customers first, investing in our communities, and delivering financial solutions that make a real difference in people's lives.</p>
+      <p>As an FDIC-insured institution, your deposits are protected, and your trust is our most valued asset.</p>
+    </div>
+    <div class=&quot;about-stats&quot;>
+      <div class=&quot;stat&quot;><div class=&quot;number&quot;>72+</div><div class=&quot;label&quot;>Years of Service</div></div>
+      <div class=&quot;stat&quot;><div class=&quot;number&quot;>12</div><div class=&quot;label&quot;>Branch Locations</div></div>
+      <div class=&quot;stat&quot;><div class=&quot;number&quot;>24/7</div><div class=&quot;label&quot;>Digital Access</div></div>
+      <div class=&quot;stat&quot;><div class=&quot;number&quot;>100K+</div><div class=&quot;label&quot;>Customers Served</div></div>
+    </div>
+  </div>
+</section>
+<footer id=&quot;contact&quot;>
+  <div class=&quot;footer-inner&quot;>
+    <div>
+      <h4>Meridian National Bank</h4>
+      <p>Banking you can trust, since 1952.</p>
+      <p style=&quot;margin-top:10px;&quot;>📞 1-800-MERIDIAN (637-4342)<br>📧 info@meridiannational.com<br>📍 12 branches across the Northeast</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href=&quot;#&quot;>Online Banking Login</a></li>
+        <li><a href=&quot;#&quot;>Open an Account</a></li>
+        <li><a href=&quot;#&quot;>Mortgage Rates</a></li>
+        <li><a href=&quot;#&quot;>Branch Locator</a></li>
+        <li><a href=&quot;#&quot;>Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href=&quot;#&quot;>Privacy Policy</a></li>
+        <li><a href=&quot;#&quot;>Terms of Service</a></li>
+        <li><a href=&quot;#&quot;>FDIC Information</a></li>
+        <li><a href=&quot;#&quot;>Accessibility</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class=&quot;footer-bottom&quot;>
+    <p>© 2024 Meridian National Bank. All rights reserved. Member FDIC. Equal Housing Lender. 🏠</p>
+  </div>
+</footer>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Meridian National Bank — Banking You Can Trust, Since 1952&lt;/title&gt;
+&lt;style&gt;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: &#x27;Georgia&#x27;, &#x27;Times New Roman&#x27;, serif; color: #1a1a2e; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav .logo { color: #c9a84c; font-size: 1.4rem; font-weight: bold; letter-spacing: 1px; }
+  nav .logo span { color: #ffffff; font-weight: normal; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #ccc; text-decoration: none; font-size: 0.9rem; font-family: Arial, sans-serif; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  header { background: linear-gradient(135deg, #0a1628 0%, #162d50 60%, #1a3a5c 100%); color: white; text-align: center; padding: 100px 20px 90px; position: relative; }
+  header::after { content: &#x27;&#x27;; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  header h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
+  header h1 span { color: #c9a84c; }
+  header p.tagline { font-size: 1.3rem; color: #d4d4d4; margin-bottom: 30px; font-style: italic; }
+  header .cta-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  header .cta { display: inline-block; padding: 14px 36px; border-radius: 4px; text-decoration: none; font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold; transition: all 0.3s; }
+  .cta-primary { background: #c9a84c; color: #0a1628; }
+  .cta-primary:hover { background: #e8d48b; }
+  .cta-secondary { border: 2px solid #ffffff; color: #ffffff; background: transparent; }
+  .cta-secondary:hover { background: rgba(255,255,255,0.1); }
+  .trust-bar { background: #0e1f3d; color: #a0b4cc; text-align: center; padding: 14px 20px; font-family: Arial, sans-serif; font-size: 0.85rem; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .trust-bar span { display: flex; align-items: center; gap: 6px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .services { background: #f7f8fa; padding: 70px 20px; }
+  .services .inner { max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 10px; color: #0a1628; }
+  .section-subtitle { text-align: center; color: #666; font-family: Arial, sans-serif; margin-bottom: 50px; font-size: 1rem; }
+  .gold-line { width: 60px; height: 3px; background: #c9a84c; margin: 12px auto 20px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+  .service-card { background: #ffffff; padding: 35px 30px; border-radius: 6px; border: 1px solid #e0e0e0; border-top: 4px solid #c9a84c; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(10,22,40,0.1); }
+  .service-card .icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .service-card h3 { font-size: 1.2rem; color: #0a1628; margin-bottom: 10px; }
+  .service-card p { color: #555; font-family: Arial, sans-serif; font-size: 0.95rem; line-height: 1.6; }
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .about-text h2 { font-size: 2rem; color: #0a1628; margin-bottom: 8px; }
+  .about-text p { color: #444; font-family: Arial, sans-serif; font-size: 0.95rem; margin-bottom: 16px; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .stat { background: #0a1628; color: white; padding: 30px 20px; border-radius: 6px; text-align: center; }
+  .stat .number { font-size: 2.2rem; color: #c9a84c; font-weight: bold; }
+  .stat .label { font-family: Arial, sans-serif; font-size: 0.85rem; color: #a0b4cc; margin-top: 4px; }
+  footer { background: #0a1628; color: #a0b4cc; padding: 50px 40px 30px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  footer h4 { color: #c9a84c; margin-bottom: 14px; font-size: 1rem; }
+  footer p, footer li { font-family: Arial, sans-serif; font-size: 0.9rem; line-height: 2; }
+  footer ul { list-style: none; }
+  footer a { color: #a0b4cc; text-decoration: none; }
+  footer a:hover { color: #c9a84c; }
+  .footer-bottom { max-width: 1100px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid #1a3050; text-align: center; font-family: Arial, sans-serif; font-size: 0.8rem; color: #667; }
+  @media (max-width: 768px) {
+    .about { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    header h1 { font-size: 2rem; }
+    nav ul { display: none; }
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;div class=&quot;logo&quot;&gt;MERIDIAN &lt;span&gt;National Bank&lt;/span&gt;&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#about&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#contact&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Online Banking&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;header&gt;
+  &lt;h1&gt;Meridian &lt;span&gt;National&lt;/span&gt; Bank&lt;/h1&gt;
+  &lt;p class=&quot;tagline&quot;&gt;Banking you can trust, since 1952.&lt;/p&gt;
+  &lt;div class=&quot;cta-group&quot;&gt;
+    &lt;a href=&quot;#&quot; class=&quot;cta cta-primary&quot;&gt;Open an Account&lt;/a&gt;
+    &lt;a href=&quot;#&quot; class=&quot;cta cta-secondary&quot;&gt;Explore Services&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+&lt;div class=&quot;trust-bar&quot;&gt;
+  &lt;span&gt;🏛️ FDIC Insured&lt;/span&gt;
+  &lt;span&gt;🏦 12 Branch Locations&lt;/span&gt;
+  &lt;span&gt;📱 24/7 Online &amp;amp; Mobile Banking&lt;/span&gt;
+  &lt;span&gt;⭐ Trusted Since 1952&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class=&quot;services&quot; id=&quot;services&quot;&gt;
+  &lt;div class=&quot;inner&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;Our Services&lt;/h2&gt;
+    &lt;div class=&quot;gold-line&quot;&gt;&lt;/div&gt;
+    &lt;p class=&quot;section-subtitle&quot;&gt;Comprehensive financial solutions for individuals, families, and businesses.&lt;/p&gt;
+    &lt;div class=&quot;services-grid&quot;&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;💰&lt;/div&gt;&lt;h3&gt;Checking &amp;amp; Savings&lt;/h3&gt;&lt;p&gt;Flexible accounts with competitive rates, no hidden fees, and seamless digital access to manage your money around the clock.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;🏠&lt;/div&gt;&lt;h3&gt;Mortgages&lt;/h3&gt;&lt;p&gt;Fixed and adjustable-rate mortgage options with personalized guidance to help you find and finance your dream home.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;🚗&lt;/div&gt;&lt;h3&gt;Auto Loans&lt;/h3&gt;&lt;p&gt;Competitive auto financing for new and used vehicles with quick approvals and flexible repayment terms.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;🏢&lt;/div&gt;&lt;h3&gt;Business Banking&lt;/h3&gt;&lt;p&gt;Tailored solutions for businesses of all sizes — from commercial lending and lines of credit to treasury management services.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;📈&lt;/div&gt;&lt;h3&gt;Wealth Management&lt;/h3&gt;&lt;p&gt;Expert financial planning, investment advisory, and retirement strategies to help you build and preserve your wealth.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;&lt;div class=&quot;icon&quot;&gt;📱&lt;/div&gt;&lt;h3&gt;Digital Banking&lt;/h3&gt;&lt;p&gt;24/7 online banking and our award-winning mobile app — deposit checks, transfer funds, and pay bills from anywhere.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;section id=&quot;about&quot;&gt;
+  &lt;div class=&quot;about&quot;&gt;
+    &lt;div class=&quot;about-text&quot;&gt;
+      &lt;h2&gt;About Meridian National Bank&lt;/h2&gt;
+      &lt;div class=&quot;gold-line&quot; style=&quot;margin:12px 0 20px;&quot;&gt;&lt;/div&gt;
+      &lt;p&gt;Founded in 1952, Meridian National Bank has served communities across the Northeast for over seven decades. What began as a single branch built on the principles of trust, integrity, and personal service has grown into a premier regional institution with 12 locations.&lt;/p&gt;
+      &lt;p&gt;Under the leadership of CEO Robert Chambers, we remain committed to the values that have guided us from the beginning — putting our customers first, investing in our communities, and delivering financial solutions that make a real difference in people&#x27;s lives.&lt;/p&gt;
+      &lt;p&gt;As an FDIC-insured institution, your deposits are protected, and your trust is our most valued asset.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;about-stats&quot;&gt;
+      &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;number&quot;&gt;72+&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Years of Service&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;number&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Branch Locations&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;number&quot;&gt;24/7&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Digital Access&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;number&quot;&gt;100K+&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Customers Served&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;footer id=&quot;contact&quot;&gt;
+  &lt;div class=&quot;footer-inner&quot;&gt;
+    &lt;div&gt;
+      &lt;h4&gt;Meridian National Bank&lt;/h4&gt;
+      &lt;p&gt;Banking you can trust, since 1952.&lt;/p&gt;
+      &lt;p style=&quot;margin-top:10px;&quot;&gt;📞 1-800-MERIDIAN (637-4342)&lt;br&gt;📧 info@meridiannational.com&lt;br&gt;📍 12 branches across the Northeast&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;h4&gt;Quick Links&lt;/h4&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Online Banking Login&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Open an Account&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Mortgage Rates&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Branch Locator&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Careers&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;h4&gt;Legal&lt;/h4&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Privacy Policy&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Terms of Service&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;FDIC Information&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Accessibility&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;footer-bottom&quot;&gt;
+    &lt;p&gt;© 2024 Meridian National Bank. All rights reserved. Member FDIC. Equal Housing Lender. 🏠&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-panel-2" style="display: none">
+  <div class="prompt-bar">
+    <div class="prompt-left">
+      <strong>Test 2:</strong> Harvest &amp; Vine
+      <div class="metrics">Score: 89 → 97 (<span style="color:#22c55e">+8</span>) &nbsp;|&nbsp; Teacher: 100 &nbsp;|&nbsp; Size: 2,056 → 8,538 chars</div>
+    </div>
+    <div class="view-toggle">
+      <button class="toggle-btn active" onclick="setView(2, 'preview')">Preview</button>
+      <button class="toggle-btn" onclick="setView(2, 'code')">Code</button>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="panel">
+      <div class="panel-header before">
+        <span>Llama-3.1-8B-Instruct-4bit — Base</span>
+        <span class="score">Score: 89/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 14 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">29 tags</span> </div>
+      <div class="panel-content" id="panel-2-before">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+header {
+  background-color: #964B00;
+  color: #fff;
+  padding: 1em;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2em;
+  margin: 0;
+}
+
+header p {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2em;
+}
+
+section {
+  background-color: #fff;
+  padding: 2em;
+  margin: 2em 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  font-size: 1.8em;
+  margin: 0;
+}
+
+section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+section li {
+  background-color: #f5f5f5;
+  padding: 1em;
+  margin: 1em 0;
+  border-bottom: 1px solid #ccc;
+}
+
+footer {
+  background-color: #964B00;
+  color: #fff;
+  padding: 1em;
+  text-align: center;
+  clear: both;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #ccc;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Harvest &amp; Vine</h1>
+  <p>From our farm to your table.</p>
+</header>
+<main>
+  <section>
+    <h2>Seasonal American Cuisine with Mediterranean Influences</h2>
+    <ul>
+      <li>Enjoy our chef's tasting menu for $95/person</li>
+      <li>À la carte entrées from $28-$45</li>
+      <li>200+ wine selections to pair with your meal</li>
+    </ul>
+  </section>
+  <section>
+    <h2>About Us</h2>
+    <p>Meet Chef Isabella Torres, James Beard nominee.</p>
+  </section>
+  <section>
+    <h2>Reservations and Events</h2>
+    <ul>
+      <li>Open Wed-Sun for dinner, 5:30-10pm</li>
+      <li>Reservations recommended</li>
+      <li>Private dining room available for events up to 40 guests</li>
+    </ul>
+  </section>
+  <footer>
+    <p>Harvest &amp; Vine, Napa Valley, California</p>
+    <ul>
+      <li>Phone: 555-555-5555</li>
+      <li>Email: <a href=&quot;mailto:info@harvestandvine.com&quot;>info@harvestandvine.com</a></li>
+    </ul>
+  </footer>
+</main>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+header {
+  background-color: #964B00;
+  color: #fff;
+  padding: 1em;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2em;
+  margin: 0;
+}
+
+header p {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2em;
+}
+
+section {
+  background-color: #fff;
+  padding: 2em;
+  margin: 2em 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  font-size: 1.8em;
+  margin: 0;
+}
+
+section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+section li {
+  background-color: #f5f5f5;
+  padding: 1em;
+  margin: 1em 0;
+  border-bottom: 1px solid #ccc;
+}
+
+footer {
+  background-color: #964B00;
+  color: #fff;
+  padding: 1em;
+  text-align: center;
+  clear: both;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+footer li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #ccc;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;
+  &lt;h1&gt;Harvest &amp; Vine&lt;/h1&gt;
+  &lt;p&gt;From our farm to your table.&lt;/p&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Seasonal American Cuisine with Mediterranean Influences&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Enjoy our chef&#x27;s tasting menu for $95/person&lt;/li&gt;
+      &lt;li&gt;À la carte entrées from $28-$45&lt;/li&gt;
+      &lt;li&gt;200+ wine selections to pair with your meal&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h2&gt;About Us&lt;/h2&gt;
+    &lt;p&gt;Meet Chef Isabella Torres, James Beard nominee.&lt;/p&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Reservations and Events&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Open Wed-Sun for dinner, 5:30-10pm&lt;/li&gt;
+      &lt;li&gt;Reservations recommended&lt;/li&gt;
+      &lt;li&gt;Private dining room available for events up to 40 guests&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+  &lt;footer&gt;
+    &lt;p&gt;Harvest &amp; Vine, Napa Valley, California&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Phone: 555-555-5555&lt;/li&gt;
+      &lt;li&gt;Email: &lt;a href=&quot;mailto:info@harvestandvine.com&quot;&gt;info@harvestandvine.com&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/footer&gt;
+&lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header after">
+        <span>Llama-3.1-8B-Instruct-4bit — Distilled</span>
+        <span class="score">Score: 97/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 47 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">84 tags</span> </div>
+      <div class="panel-content" id="panel-2-after">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>Harvest &amp; Vine — Napa Valley's Premier Farm-to-Table Restaurant</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #3a3a2e; background: #f7f3ed; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 5%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 10; }
+  nav.logo { font-size: 1.4rem; font-weight: 700; color: #olivegreen; }
+  nav.logo span { color: #terracotta; }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul li a { text-decoration: none; color: #3a3a2e; font-weight: 500; transition: color 0.3s; }
+  nav ul li a:hover { color: #terracotta; }
+  .hero { background: linear-gradient(135deg, #f7f3ed, #olivegreen); min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4rem 2rem; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, #f7f3ed, #olivegreen); }
+  .hero h1 { font-size: 3.2rem; color: #terracotta; margin-bottom: 0.5rem; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
+  .hero.tagline { font-size: 1.4rem; color: #3a3a2e; font-style: italic; margin-bottom: 2rem; font-weight: 300; }
+  .hero.cta { display: inline-block; background: #d4a867; color: #3a3a2e; padding: 0.9rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .hero.cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .hero.symbol { font-size: 3rem; margin-bottom: 1rem; opacity: 0.8; }
+  section { padding: 5rem 5%; }
+  .section-title { text-align: center; font-size: 2.2rem; color: #olivegreen; margin-bottom: 0.5rem; }
+  .section-subtitle { text-align: center; color: #7a5C47; margin-bottom: 3rem; font-size: 1.05rem; }
+  .services { background: #f7f3ed; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; max-width: 1100px; margin: 0 auto; }
+  .service-card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid #d4a867; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 1rem; }
+  .service-card h3 { font-size: 1.4rem; color: #3a3a2e; margin-bottom: 0.5rem; }
+  .service-card p { color: #5A3E2B; font-size: 0.95rem; }
+  .about { background: #ede8df; }
+  .about-content { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .about-text p { line-height: 1.7; color: #5A3E2B; font-size: 1.05rem; }
+  .stats { display: flex; gap: 2rem; margin-top: 3rem; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #d4a867; font-weight: 800; }
+  .stat.label { font-size: 0.85rem; color: #3a3a2e; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #d4a867, #f7f3ed); text-align: center; padding: 3rem 2rem; border-radius: 20px; }
+  .cta-banner h2 { font-size: 1.8rem; color: #3a3a2e; margin-bottom: 1rem; }
+  .cta-banner p { color: #5A3E2B; font-size: 1.05rem; margin-bottom: 2rem; }
+  .cta-banner a { text-decoration: none; color: #olivegreen; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  footer { background: #3a3a2e; color: #f7f3ed; padding: 3rem 5%; text-align: center; }
+  .footer-content { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+  .footer-col h4 { color: #d4a867; margin-bottom: 0.8rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-col p,.footer-col a { color: #e8e0d4; font-size: 0.9rem; line-height: 1.8; text-decoration: none; }
+  .footer-col a:hover { color: #terracotta; }
+  .footer-bottom { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #4a4a3e; font-size: 0.85rem; color: #5A3E2B; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-content { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class=&quot;logo&quot;>🌿 Harvest <span>&amp;</span> Vine</div>
+  <ul>
+    <li><a href=&quot;#services&quot;>Services</a></li>
+    <li><a href=&quot;#about&quot;>About</a></li>
+    <li><a href=&quot;#contact&quot;>Contact</a></li>
+  </ul>
+</nav>
+<header class=&quot;hero&quot;>
+  <h1>🌿 Harvest &amp; Vine</h1>
+  <p class=&quot;tagline&quot;>From our farm to your table.</p>
+  <div class=&quot;symbol&quot;>🌿</div>
+  <a href=&quot;#contact&quot; class=&quot;cta&quot;>🍴 Book Your Table</a>
+</header>
+<main>
+  <section id=&quot;services&quot;>
+    <h2 class=&quot;section-title&quot;>Our Menu</h2>
+    <p class=&quot;section-subtitle&quot;>Seasonal American with Mediterranean influences</p>
+    <div class=&quot;services&quot;>
+      <div class=&quot;services-grid&quot;>
+        <div class=&quot;service-card&quot;>
+          <div class=&quot;icon&quot;>🍴 Tasting Menu: $95/person</div>
+          <h3>🍴 Tasting Menu</h3>
+          <p>A journey of 5 courses crafted by Chef Isabella Torres, James Beard nominee.</p>
+        </div>
+        <div class=&quot;service-card&quot;>
+          <div class=&quot;icon&quot;>🍔 À La Carte Entrées: $28-$45</div>
+          <h3>🍔 À La Carte Entrées</h3>
+          <p>Fresh, locally sourced ingredients combined with Mediterranean flavors.</p>
+        </div>
+        <div class=&quot;service-card&quot;>
+          <div class=&quot;icon&quot;>🍷 Wine List: 200+ selections</div>
+          <h3>🍷 Wine List</h3>
+          <p>An extensive collection of wines from around the world, carefully curated by our sommelier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id=&quot;about&quot;>
+    <h2 class=&quot;section-title&quot;>About Harvest &amp; Vine</h2>
+    <p class=&quot;section-subtitle&quot;>Located in the heart of Napa Valley, California</p>
+    <div class=&quot;about&quot;>
+      <div class=&quot;about-content&quot;>
+        <div class=&quot;about-text&quot;>
+          <p>Harvest &amp; Vine is a farm-to-table restaurant that celebrates the beauty of seasonal American cuisine with Mediterranean influences. Our chef, Isabella Torres, has been nominated for a James Beard award and brings her passion for local, sustainable ingredients to every dish.</p>
+          <p>With a warm, earthy tone interior and a patio seating area overlooking the vineyards, Harvest &amp; Vine is the perfect place to relax and enjoy a meal with friends and family.</p>
+        </div>
+        <div class=&quot;stats&quot;>
+          <div class=&quot;stat&quot;>
+            <div class=&quot;number&quot;>👨‍🍳 1 Chef</div>
+            <div class=&quot;label&quot;>Isabella Torres</div>
+          </div>
+          <div class=&quot;stat&quot;>
+            <div class=&quot;number&quot;>🍴 3 Meals</div>
+            <div class=&quot;label&quot;>Tasting Menu, À La Carte Entrées, Wine</div>
+          </div>
+          <div class=&quot;stat&quot;>
+            <div class=&quot;number&quot;>🏠 1 Location</div>
+            <div class=&quot;label&quot;>Napa Valley, California</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer id=&quot;contact&quot;>
+  <div class=&quot;footer-content&quot;>
+    <div class=&quot;footer-col&quot;>
+      <h4>🏠 Location</h4>
+      <p>Harvest &amp; Vine<br>Napa Valley, California<br>Mon-Sat: 5:30pm – 10pm<br>Sunday: Closed</p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>📞 Contact Us</h4>
+      <p>Phone: (707) 555-0177<br>Email: <a href=&quot;mailto:hello@harvestandvine.com&quot;>hello@harvestandvine.com</a></p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>👴 Private Dining Room</h4>
+      <p>Capacity: 40 guests<br>Price: Custom pricing<br>Phone: (707) 555-0177<br>Email: <a href=&quot;mailto:hello@harvestandvine.com&quot;>hello@harvestandvine.com</a></p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>🐾 Pets</h4>
+      <p>Not allowed inside the restaurant<br>Can be left in parked car</p>
+    </div>
+  </div>
+  <div class=&quot;footer-bottom&quot;>
+    <p>© 2024 Harvest &amp; Vine, Napa Valley, California. All rights reserved. Made with 🧡 for foodies everywhere.</p>
+  </div>
+</footer>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Harvest &amp; Vine — Napa Valley&#x27;s Premier Farm-to-Table Restaurant&lt;/title&gt;
+&lt;style&gt;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; color: #3a3a2e; background: #f7f3ed; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 5%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 10; }
+  nav.logo { font-size: 1.4rem; font-weight: 700; color: #olivegreen; }
+  nav.logo span { color: #terracotta; }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul li a { text-decoration: none; color: #3a3a2e; font-weight: 500; transition: color 0.3s; }
+  nav ul li a:hover { color: #terracotta; }
+  .hero { background: linear-gradient(135deg, #f7f3ed, #olivegreen); min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4rem 2rem; position: relative; }
+  .hero::after { content: &#x27;&#x27;; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, #f7f3ed, #olivegreen); }
+  .hero h1 { font-size: 3.2rem; color: #terracotta; margin-bottom: 0.5rem; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
+  .hero.tagline { font-size: 1.4rem; color: #3a3a2e; font-style: italic; margin-bottom: 2rem; font-weight: 300; }
+  .hero.cta { display: inline-block; background: #d4a867; color: #3a3a2e; padding: 0.9rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .hero.cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .hero.symbol { font-size: 3rem; margin-bottom: 1rem; opacity: 0.8; }
+  section { padding: 5rem 5%; }
+  .section-title { text-align: center; font-size: 2.2rem; color: #olivegreen; margin-bottom: 0.5rem; }
+  .section-subtitle { text-align: center; color: #7a5C47; margin-bottom: 3rem; font-size: 1.05rem; }
+  .services { background: #f7f3ed; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; max-width: 1100px; margin: 0 auto; }
+  .service-card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid #d4a867; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 1rem; }
+  .service-card h3 { font-size: 1.4rem; color: #3a3a2e; margin-bottom: 0.5rem; }
+  .service-card p { color: #5A3E2B; font-size: 0.95rem; }
+  .about { background: #ede8df; }
+  .about-content { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .about-text p { line-height: 1.7; color: #5A3E2B; font-size: 1.05rem; }
+  .stats { display: flex; gap: 2rem; margin-top: 3rem; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #d4a867; font-weight: 800; }
+  .stat.label { font-size: 0.85rem; color: #3a3a2e; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #d4a867, #f7f3ed); text-align: center; padding: 3rem 2rem; border-radius: 20px; }
+  .cta-banner h2 { font-size: 1.8rem; color: #3a3a2e; margin-bottom: 1rem; }
+  .cta-banner p { color: #5A3E2B; font-size: 1.05rem; margin-bottom: 2rem; }
+  .cta-banner a { text-decoration: none; color: #olivegreen; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  footer { background: #3a3a2e; color: #f7f3ed; padding: 3rem 5%; text-align: center; }
+  .footer-content { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+  .footer-col h4 { color: #d4a867; margin-bottom: 0.8rem; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-col p,.footer-col a { color: #e8e0d4; font-size: 0.9rem; line-height: 1.8; text-decoration: none; }
+  .footer-col a:hover { color: #terracotta; }
+  .footer-bottom { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #4a4a3e; font-size: 0.85rem; color: #5A3E2B; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-content { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 1rem; }
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;div class=&quot;logo&quot;&gt;🌿 Harvest &lt;span&gt;&amp;&lt;/span&gt; Vine&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#about&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#contact&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;header class=&quot;hero&quot;&gt;
+  &lt;h1&gt;🌿 Harvest &amp; Vine&lt;/h1&gt;
+  &lt;p class=&quot;tagline&quot;&gt;From our farm to your table.&lt;/p&gt;
+  &lt;div class=&quot;symbol&quot;&gt;🌿&lt;/div&gt;
+  &lt;a href=&quot;#contact&quot; class=&quot;cta&quot;&gt;🍴 Book Your Table&lt;/a&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id=&quot;services&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;Our Menu&lt;/h2&gt;
+    &lt;p class=&quot;section-subtitle&quot;&gt;Seasonal American with Mediterranean influences&lt;/p&gt;
+    &lt;div class=&quot;services&quot;&gt;
+      &lt;div class=&quot;services-grid&quot;&gt;
+        &lt;div class=&quot;service-card&quot;&gt;
+          &lt;div class=&quot;icon&quot;&gt;🍴 Tasting Menu: $95/person&lt;/div&gt;
+          &lt;h3&gt;🍴 Tasting Menu&lt;/h3&gt;
+          &lt;p&gt;A journey of 5 courses crafted by Chef Isabella Torres, James Beard nominee.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;service-card&quot;&gt;
+          &lt;div class=&quot;icon&quot;&gt;🍔 À La Carte Entrées: $28-$45&lt;/div&gt;
+          &lt;h3&gt;🍔 À La Carte Entrées&lt;/h3&gt;
+          &lt;p&gt;Fresh, locally sourced ingredients combined with Mediterranean flavors.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;service-card&quot;&gt;
+          &lt;div class=&quot;icon&quot;&gt;🍷 Wine List: 200+ selections&lt;/div&gt;
+          &lt;h3&gt;🍷 Wine List&lt;/h3&gt;
+          &lt;p&gt;An extensive collection of wines from around the world, carefully curated by our sommelier.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section id=&quot;about&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;About Harvest &amp; Vine&lt;/h2&gt;
+    &lt;p class=&quot;section-subtitle&quot;&gt;Located in the heart of Napa Valley, California&lt;/p&gt;
+    &lt;div class=&quot;about&quot;&gt;
+      &lt;div class=&quot;about-content&quot;&gt;
+        &lt;div class=&quot;about-text&quot;&gt;
+          &lt;p&gt;Harvest &amp; Vine is a farm-to-table restaurant that celebrates the beauty of seasonal American cuisine with Mediterranean influences. Our chef, Isabella Torres, has been nominated for a James Beard award and brings her passion for local, sustainable ingredients to every dish.&lt;/p&gt;
+          &lt;p&gt;With a warm, earthy tone interior and a patio seating area overlooking the vineyards, Harvest &amp; Vine is the perfect place to relax and enjoy a meal with friends and family.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stats&quot;&gt;
+          &lt;div class=&quot;stat&quot;&gt;
+            &lt;div class=&quot;number&quot;&gt;👨‍🍳 1 Chef&lt;/div&gt;
+            &lt;div class=&quot;label&quot;&gt;Isabella Torres&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;stat&quot;&gt;
+            &lt;div class=&quot;number&quot;&gt;🍴 3 Meals&lt;/div&gt;
+            &lt;div class=&quot;label&quot;&gt;Tasting Menu, À La Carte Entrées, Wine&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;stat&quot;&gt;
+            &lt;div class=&quot;number&quot;&gt;🏠 1 Location&lt;/div&gt;
+            &lt;div class=&quot;label&quot;&gt;Napa Valley, California&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+&lt;footer id=&quot;contact&quot;&gt;
+  &lt;div class=&quot;footer-content&quot;&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;🏠 Location&lt;/h4&gt;
+      &lt;p&gt;Harvest &amp; Vine&lt;br&gt;Napa Valley, California&lt;br&gt;Mon-Sat: 5:30pm – 10pm&lt;br&gt;Sunday: Closed&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;📞 Contact Us&lt;/h4&gt;
+      &lt;p&gt;Phone: (707) 555-0177&lt;br&gt;Email: &lt;a href=&quot;mailto:hello@harvestandvine.com&quot;&gt;hello@harvestandvine.com&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;👴 Private Dining Room&lt;/h4&gt;
+      &lt;p&gt;Capacity: 40 guests&lt;br&gt;Price: Custom pricing&lt;br&gt;Phone: (707) 555-0177&lt;br&gt;Email: &lt;a href=&quot;mailto:hello@harvestandvine.com&quot;&gt;hello@harvestandvine.com&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;🐾 Pets&lt;/h4&gt;
+      &lt;p&gt;Not allowed inside the restaurant&lt;br&gt;Can be left in parked car&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;footer-bottom&quot;&gt;
+    &lt;p&gt;© 2024 Harvest &amp; Vine, Napa Valley, California. All rights reserved. Made with 🧡 for foodies everywhere.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header teacher">
+        <span>claude-opus-4-6</span>
+        <span class="score">Score: 100/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 47 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">80 tags</span> </div>
+      <div class="panel-content" id="panel-2-teacher">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+    <meta charset=&quot;UTF-8&quot;>
+    <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+    <title>Harvest &amp; Vine | Farm-to-Table Dining in Napa Valley</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #FDF6EC; color: #3B2F2F; }
+        .sans { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+
+        header {
+            background: linear-gradient(135deg, #5C4033 0%, #3B2F2F 50%, #4A5D3A 100%);
+            color: #FDF6EC;
+            text-align: center;
+            padding: 60px 20px 70px;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-top: 30px solid #3B2F2F;
+        }
+        nav { background: #4A5D3A; padding: 14px 20px; text-align: center; }
+        nav a { color: #E8DCC8; text-decoration: none; margin: 0 18px; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s; }
+        nav a:hover { color: #C67B4E; }
+        .logo-accent { color: #C67B4E; font-size: 1.2rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+        h1 { font-size: 3.5rem; letter-spacing: 3px; margin-bottom: 12px; font-weight: 400; }
+        h1 span { color: #C67B4E; }
+        .tagline { font-style: italic; font-size: 1.3rem; color: #D4C5A9; margin-bottom: 20px; }
+        .hero-detail { font-size: 0.95rem; color: #BFB49A; letter-spacing: 1px; }
+
+        main { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 8px; }
+        .section-title .divider { width: 60px; height: 2px; background: #C67B4E; margin: 0 auto; }
+
+        .experience { padding: 60px 0 50px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .feature { background: #FFFBF3; border: 1px solid #E8DCC8; border-radius: 8px; padding: 35px 30px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+        .feature:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(92,64,51,0.12); }
+        .feature .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .feature h3 { font-size: 1.2rem; color: #4A5D3A; margin-bottom: 10px; font-weight: 400; }
+        .feature p { font-size: 0.95rem; line-height: 1.7; color: #6B5B4F; }
+        .feature .price { color: #C67B4E; font-weight: 600; font-size: 1rem; margin-top: 8px; display: inline-block; }
+
+        .about { padding: 50px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about-text h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 20px; }
+        .about-text p { font-size: 1rem; line-height: 1.8; color: #6B5B4F; margin-bottom: 15px; }
+        .about-text .chef-name { color: #C67B4E; font-weight: 700; }
+        .about-visual { background: linear-gradient(145deg, #4A5D3A, #6B7F56); border-radius: 12px; padding: 50px 35px; color: #FDF6EC; text-align: center; }
+        .about-visual .quote { font-size: 1.4rem; font-style: italic; line-height: 1.6; margin-bottom: 20px; }
+        .about-visual .attribution { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; color: #D4C5A9; }
+
+        .info-bar { background: #5C4033; color: #FDF6EC; padding: 50px 20px; margin: 50px 0 0; }
+        .info-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; }
+        .info-item .label { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #C67B4E; margin-bottom: 10px; }
+        .info-item p { font-size: 1rem; line-height: 1.7; color: #E8DCC8; }
+
+        .cta-section { text-align: center; padding: 60px 20px; background: linear-gradient(to right, #F5EDE0, #FDF6EC, #F5EDE0); }
+        .cta-section h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 15px; }
+        .cta-section p { color: #6B5B4F; margin-bottom: 25px; font-size: 1.05rem; }
+        .cta-btn { display: inline-block; background: #C67B4E; color: #FDF6EC; padding: 15px 45px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; transition: background 0.3s; }
+        .cta-btn:hover { background: #A8623A; }
+
+        footer { background: #3B2F2F; color: #BFB49A; text-align: center; padding: 35px 20px; }
+        footer p { font-size: 0.85rem; margin-bottom: 6px; line-height: 1.6; }
+        footer .footer-name { color: #C67B4E; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 12px; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.3rem; }
+            .about { grid-template-columns: 1fr; }
+            nav a { margin: 0 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class=&quot;sans&quot;>
+    <a href=&quot;#experience&quot;>Menu</a>
+    <a href=&quot;#about&quot;>Our Story</a>
+    <a href=&quot;#visit&quot;>Visit</a>
+    <a href=&quot;#reservations&quot;>Reservations</a>
+</nav>
+
+<header>
+    <div class=&quot;logo-accent sans&quot;>Napa Valley, California</div>
+    <h1>Harvest <span>&amp;</span> Vine</h1>
+    <p class=&quot;tagline&quot;>&quot;From our farm to your table.&quot;</p>
+    <p class=&quot;hero-detail sans&quot;>Seasonal American · Mediterranean Influences · Estate Grown</p>
+</header>
+
+<main>
+    <section class=&quot;experience&quot; id=&quot;experience&quot;>
+        <div class=&quot;section-title&quot;>
+            <h2>The Dining Experience</h2>
+            <div class=&quot;divider&quot;></div>
+        </div>
+        <div class=&quot;features&quot;>
+            <div class=&quot;feature&quot;>
+                <div class=&quot;icon&quot;>🌿</div>
+                <h3>Chef's Tasting Menu</h3>
+                <p>A curated journey through the season's finest ingredients, sourced from our estate farm and local purveyors. Five courses with optional wine pairings.</p>
+                <span class=&quot;price sans&quot;>$95 per person</span>
+            </div>
+            <div class=&quot;feature&quot;>
+                <div class=&quot;icon&quot;>🍽️</div>
+                <h3>À La Carte Dining</h3>
+                <p>Seasonal entrées blending American heartiness with Mediterranean brightness — wood-fired meats, house-made pastas, and garden-fresh compositions.</p>
+                <span class=&quot;price sans&quot;>Entrées $28–$45</span>
+            </div>
+            <div class=&quot;feature&quot;>
+                <div class=&quot;icon&quot;>🍷</div>
+                <h3>Wine Cellar</h3>
+                <p>Over 200 selections celebrating Napa Valley's finest estates alongside Old World treasures. Our sommelier is delighted to guide your pairing journey.</p>
+                <span class=&quot;price sans&quot;>200+ Selections</span>
+            </div>
+        </div>
+    </section>
+
+    <section class=&quot;about&quot; id=&quot;about&quot;>
+        <div class=&quot;about-text&quot;>
+            <h2>Our Story</h2>
+            <p>Harvest &amp; Vine was born from a simple belief: the best meals begin in rich soil. Nestled among the rolling vineyards of Napa Valley, our restaurant celebrates the profound connection between land, season, and table.</p>
+            <p>Under the direction of <span class=&quot;chef-name&quot;>Chef Isabella Torres</span>, a James Beard Award nominee, our kitchen transforms estate-grown produce, sustainably raised proteins, and foraged ingredients into dishes that honor both American culinary tradition and the sun-soaked flavors of the Mediterranean.</p>
+            <p>Every evening, our menu tells the story of what's growing, what's ripe, and what the valley has to offer — right now, at this very moment.</p>
+        </div>
+        <div class=&quot;about-visual&quot;>
+            <p class=&quot;quote&quot;>&quot;Cooking is an act of listening — to the soil, to the season, to the ingredient itself. My job is simply to not get in the way.&quot;</p>
+            <p class=&quot;attribution&quot;>— Chef Isabella Torres</p>
+        </div>
+    </section>
+</main>
+
+<section class=&quot;info-bar&quot; id=&quot;visit&quot;>
+    <div class=&quot;info-grid&quot;>
+        <div class=&quot;info-item&quot;>
+            <div class=&quot;label sans&quot;>Hours</div>
+            <p>Wednesday – Sunday<br>Dinner: 5:30 – 10:00 PM<br>Monday &amp; Tuesday: Closed</p>
+        </div>
+        <div class=&quot;info-item&quot;>
+            <div class=&quot;label sans&quot;>Reservations</div>
+            <p>Highly recommended<br>📞 (707) 555-0142<br>reservations@harvestandvine.com</p>
+        </div>
+        <div class=&quot;info-item&quot;>
+            <div class=&quot;label sans&quot;>Private Events</div>
+            <p>Private dining room available<br>Accommodates up to 40 guests<br>Inquire for custom menus</p>
+        </div>
+        <div class=&quot;info-item&quot;>
+            <div class=&quot;label sans&quot;>Location</div>
+            <p>1284 Silverado Trail<br>Napa Valley, CA 94558<br>Among the vineyards</p>
+        </div>
+    </div>
+</section>
+
+<section class=&quot;cta-section&quot; id=&quot;reservations&quot;>
+    <h2>Reserve Your Table</h2>
+    <p>Join us for an evening where every dish tells the story of Napa Valley.</p>
+    <a href=&quot;mailto:reservations@harvestandvine.com&quot; class=&quot;cta-btn sans&quot;>Make a Reservation</a>
+</section>
+
+<footer>
+    <p class=&quot;footer-name sans&quot;>Harvest &amp; Vine</p>
+    <p>1284 Silverado Trail, Napa Valley, CA 94558</p>
+    <p>📞 (707) 555-0142 &amp;nbsp;·&amp;nbsp; reservations@harvestandvine.com</p>
+    <p style=&quot;margin-top: 15px; font-size: 0.8rem; color: #7A6E62;&quot;>© 2024 Harvest &amp; Vine. All rights reserved.</p>
+</footer>
+
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Harvest &amp; Vine | Farm-to-Table Dining in Napa Valley&lt;/title&gt;
+    &lt;style&gt;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: &#x27;Georgia&#x27;, &#x27;Times New Roman&#x27;, serif; background: #FDF6EC; color: #3B2F2F; }
+        .sans { font-family: &#x27;Segoe UI&#x27;, &#x27;Helvetica Neue&#x27;, Arial, sans-serif; }
+
+        header {
+            background: linear-gradient(135deg, #5C4033 0%, #3B2F2F 50%, #4A5D3A 100%);
+            color: #FDF6EC;
+            text-align: center;
+            padding: 60px 20px 70px;
+            position: relative;
+        }
+        header::after {
+            content: &#x27;&#x27;;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-top: 30px solid #3B2F2F;
+        }
+        nav { background: #4A5D3A; padding: 14px 20px; text-align: center; }
+        nav a { color: #E8DCC8; text-decoration: none; margin: 0 18px; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s; }
+        nav a:hover { color: #C67B4E; }
+        .logo-accent { color: #C67B4E; font-size: 1.2rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+        h1 { font-size: 3.5rem; letter-spacing: 3px; margin-bottom: 12px; font-weight: 400; }
+        h1 span { color: #C67B4E; }
+        .tagline { font-style: italic; font-size: 1.3rem; color: #D4C5A9; margin-bottom: 20px; }
+        .hero-detail { font-size: 0.95rem; color: #BFB49A; letter-spacing: 1px; }
+
+        main { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 8px; }
+        .section-title .divider { width: 60px; height: 2px; background: #C67B4E; margin: 0 auto; }
+
+        .experience { padding: 60px 0 50px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .feature { background: #FFFBF3; border: 1px solid #E8DCC8; border-radius: 8px; padding: 35px 30px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+        .feature:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(92,64,51,0.12); }
+        .feature .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .feature h3 { font-size: 1.2rem; color: #4A5D3A; margin-bottom: 10px; font-weight: 400; }
+        .feature p { font-size: 0.95rem; line-height: 1.7; color: #6B5B4F; }
+        .feature .price { color: #C67B4E; font-weight: 600; font-size: 1rem; margin-top: 8px; display: inline-block; }
+
+        .about { padding: 50px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .about-text h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 20px; }
+        .about-text p { font-size: 1rem; line-height: 1.8; color: #6B5B4F; margin-bottom: 15px; }
+        .about-text .chef-name { color: #C67B4E; font-weight: 700; }
+        .about-visual { background: linear-gradient(145deg, #4A5D3A, #6B7F56); border-radius: 12px; padding: 50px 35px; color: #FDF6EC; text-align: center; }
+        .about-visual .quote { font-size: 1.4rem; font-style: italic; line-height: 1.6; margin-bottom: 20px; }
+        .about-visual .attribution { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; color: #D4C5A9; }
+
+        .info-bar { background: #5C4033; color: #FDF6EC; padding: 50px 20px; margin: 50px 0 0; }
+        .info-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; }
+        .info-item .label { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #C67B4E; margin-bottom: 10px; }
+        .info-item p { font-size: 1rem; line-height: 1.7; color: #E8DCC8; }
+
+        .cta-section { text-align: center; padding: 60px 20px; background: linear-gradient(to right, #F5EDE0, #FDF6EC, #F5EDE0); }
+        .cta-section h2 { font-size: 2rem; color: #5C4033; font-weight: 400; margin-bottom: 15px; }
+        .cta-section p { color: #6B5B4F; margin-bottom: 25px; font-size: 1.05rem; }
+        .cta-btn { display: inline-block; background: #C67B4E; color: #FDF6EC; padding: 15px 45px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; transition: background 0.3s; }
+        .cta-btn:hover { background: #A8623A; }
+
+        footer { background: #3B2F2F; color: #BFB49A; text-align: center; padding: 35px 20px; }
+        footer p { font-size: 0.85rem; margin-bottom: 6px; line-height: 1.6; }
+        footer .footer-name { color: #C67B4E; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 12px; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.3rem; }
+            .about { grid-template-columns: 1fr; }
+            nav a { margin: 0 10px; font-size: 0.8rem; }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;nav class=&quot;sans&quot;&gt;
+    &lt;a href=&quot;#experience&quot;&gt;Menu&lt;/a&gt;
+    &lt;a href=&quot;#about&quot;&gt;Our Story&lt;/a&gt;
+    &lt;a href=&quot;#visit&quot;&gt;Visit&lt;/a&gt;
+    &lt;a href=&quot;#reservations&quot;&gt;Reservations&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;header&gt;
+    &lt;div class=&quot;logo-accent sans&quot;&gt;Napa Valley, California&lt;/div&gt;
+    &lt;h1&gt;Harvest &lt;span&gt;&amp;&lt;/span&gt; Vine&lt;/h1&gt;
+    &lt;p class=&quot;tagline&quot;&gt;&quot;From our farm to your table.&quot;&lt;/p&gt;
+    &lt;p class=&quot;hero-detail sans&quot;&gt;Seasonal American · Mediterranean Influences · Estate Grown&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+    &lt;section class=&quot;experience&quot; id=&quot;experience&quot;&gt;
+        &lt;div class=&quot;section-title&quot;&gt;
+            &lt;h2&gt;The Dining Experience&lt;/h2&gt;
+            &lt;div class=&quot;divider&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;features&quot;&gt;
+            &lt;div class=&quot;feature&quot;&gt;
+                &lt;div class=&quot;icon&quot;&gt;🌿&lt;/div&gt;
+                &lt;h3&gt;Chef&#x27;s Tasting Menu&lt;/h3&gt;
+                &lt;p&gt;A curated journey through the season&#x27;s finest ingredients, sourced from our estate farm and local purveyors. Five courses with optional wine pairings.&lt;/p&gt;
+                &lt;span class=&quot;price sans&quot;&gt;$95 per person&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;feature&quot;&gt;
+                &lt;div class=&quot;icon&quot;&gt;🍽️&lt;/div&gt;
+                &lt;h3&gt;À La Carte Dining&lt;/h3&gt;
+                &lt;p&gt;Seasonal entrées blending American heartiness with Mediterranean brightness — wood-fired meats, house-made pastas, and garden-fresh compositions.&lt;/p&gt;
+                &lt;span class=&quot;price sans&quot;&gt;Entrées $28–$45&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;feature&quot;&gt;
+                &lt;div class=&quot;icon&quot;&gt;🍷&lt;/div&gt;
+                &lt;h3&gt;Wine Cellar&lt;/h3&gt;
+                &lt;p&gt;Over 200 selections celebrating Napa Valley&#x27;s finest estates alongside Old World treasures. Our sommelier is delighted to guide your pairing journey.&lt;/p&gt;
+                &lt;span class=&quot;price sans&quot;&gt;200+ Selections&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;about&quot; id=&quot;about&quot;&gt;
+        &lt;div class=&quot;about-text&quot;&gt;
+            &lt;h2&gt;Our Story&lt;/h2&gt;
+            &lt;p&gt;Harvest &amp; Vine was born from a simple belief: the best meals begin in rich soil. Nestled among the rolling vineyards of Napa Valley, our restaurant celebrates the profound connection between land, season, and table.&lt;/p&gt;
+            &lt;p&gt;Under the direction of &lt;span class=&quot;chef-name&quot;&gt;Chef Isabella Torres&lt;/span&gt;, a James Beard Award nominee, our kitchen transforms estate-grown produce, sustainably raised proteins, and foraged ingredients into dishes that honor both American culinary tradition and the sun-soaked flavors of the Mediterranean.&lt;/p&gt;
+            &lt;p&gt;Every evening, our menu tells the story of what&#x27;s growing, what&#x27;s ripe, and what the valley has to offer — right now, at this very moment.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;about-visual&quot;&gt;
+            &lt;p class=&quot;quote&quot;&gt;&quot;Cooking is an act of listening — to the soil, to the season, to the ingredient itself. My job is simply to not get in the way.&quot;&lt;/p&gt;
+            &lt;p class=&quot;attribution&quot;&gt;— Chef Isabella Torres&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+&lt;/main&gt;
+
+&lt;section class=&quot;info-bar&quot; id=&quot;visit&quot;&gt;
+    &lt;div class=&quot;info-grid&quot;&gt;
+        &lt;div class=&quot;info-item&quot;&gt;
+            &lt;div class=&quot;label sans&quot;&gt;Hours&lt;/div&gt;
+            &lt;p&gt;Wednesday – Sunday&lt;br&gt;Dinner: 5:30 – 10:00 PM&lt;br&gt;Monday &amp; Tuesday: Closed&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;info-item&quot;&gt;
+            &lt;div class=&quot;label sans&quot;&gt;Reservations&lt;/div&gt;
+            &lt;p&gt;Highly recommended&lt;br&gt;📞 (707) 555-0142&lt;br&gt;reservations@harvestandvine.com&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;info-item&quot;&gt;
+            &lt;div class=&quot;label sans&quot;&gt;Private Events&lt;/div&gt;
+            &lt;p&gt;Private dining room available&lt;br&gt;Accommodates up to 40 guests&lt;br&gt;Inquire for custom menus&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;info-item&quot;&gt;
+            &lt;div class=&quot;label sans&quot;&gt;Location&lt;/div&gt;
+            &lt;p&gt;1284 Silverado Trail&lt;br&gt;Napa Valley, CA 94558&lt;br&gt;Among the vineyards&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;cta-section&quot; id=&quot;reservations&quot;&gt;
+    &lt;h2&gt;Reserve Your Table&lt;/h2&gt;
+    &lt;p&gt;Join us for an evening where every dish tells the story of Napa Valley.&lt;/p&gt;
+    &lt;a href=&quot;mailto:reservations@harvestandvine.com&quot; class=&quot;cta-btn sans&quot;&gt;Make a Reservation&lt;/a&gt;
+&lt;/section&gt;
+
+&lt;footer&gt;
+    &lt;p class=&quot;footer-name sans&quot;&gt;Harvest &amp; Vine&lt;/p&gt;
+    &lt;p&gt;1284 Silverado Trail, Napa Valley, CA 94558&lt;/p&gt;
+    &lt;p&gt;📞 (707) 555-0142 &amp;nbsp;·&amp;nbsp; reservations@harvestandvine.com&lt;/p&gt;
+    &lt;p style=&quot;margin-top: 15px; font-size: 0.8rem; color: #7A6E62;&quot;&gt;© 2024 Harvest &amp; Vine. All rights reserved.&lt;/p&gt;
+&lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-panel-3" style="display: none">
+  <div class="prompt-bar">
+    <div class="prompt-left">
+      <strong>Test 3:</strong> NeuralPath AI
+      <div class="metrics">Score: 79 → 97 (<span style="color:#22c55e">+18</span>) &nbsp;|&nbsp; Teacher: 97 &nbsp;|&nbsp; Size: 1,995 → 7,876 chars</div>
+    </div>
+    <div class="view-toggle">
+      <button class="toggle-btn active" onclick="setView(3, 'preview')">Preview</button>
+      <button class="toggle-btn" onclick="setView(3, 'code')">Code</button>
+    </div>
+  </div>
+  <div class="comparison">
+    <div class="panel">
+      <div class="panel-header before">
+        <span>Llama-3.1-8B-Instruct-4bit — Base</span>
+        <span class="score">Score: 79/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 13 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">23 tags</span> </div>
+      <div class="panel-content" id="panel-3-before">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #1a1d23;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #2f343d;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 36px;
+  margin: 0;
+  padding: 0;
+}
+
+header p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.feature {
+  background-color: #2f343d;
+  margin: 10px;
+  padding: 20px;
+  width: calc(33.33% - 20px);
+  text-align: center;
+}
+
+.feature h2 {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.feature p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+.about {
+  padding: 20px;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.about p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+footer {
+  background-color: #2f343d;
+  padding: 10px;
+  text-align: center;
+  clear: both;
+}
+
+footer p {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>NeuralPath AI</h1>
+  <p>Intelligence at the speed of business.</p>
+</header>
+<main>
+  <section class=&quot;features&quot;>
+    <div class=&quot;feature&quot;>
+      <h2>DocScan</h2>
+      <p>Automated data extraction for enterprise.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>FlowEngine</h2>
+      <p>Workflow automation for seamless processes.</p>
+    </div>
+    <div class=&quot;feature&quot;>
+      <h2>InsightAPI</h2>
+      <p>Analytics integration for data-driven decisions.</p>
+    </div>
+  </section>
+  <section class=&quot;about&quot;>
+    <h2>About Us</h2>
+    <p>Founded in 2023, NeuralPath AI is a San Francisco-based tech startup. We've raised $12M in Series A funding and serve over 50+ enterprise clients.</p>
+  </section>
+  <footer>
+    <p>NeuralPath AI, San Francisco, CA. SOC 2 compliant. 2023.</p>
+  </footer>
+</main>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+body {
+  font-family: &#x27;Montserrat&#x27;, sans-serif;
+  background-color: #1a1d23;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #2f343d;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 36px;
+  margin: 0;
+  padding: 0;
+}
+
+header p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.feature {
+  background-color: #2f343d;
+  margin: 10px;
+  padding: 20px;
+  width: calc(33.33% - 20px);
+  text-align: center;
+}
+
+.feature h2 {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.feature p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+.about {
+  padding: 20px;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+
+.about p {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+footer {
+  background-color: #2f343d;
+  padding: 10px;
+  text-align: center;
+  clear: both;
+}
+
+footer p {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  color: #8e959f;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;
+  &lt;h1&gt;NeuralPath AI&lt;/h1&gt;
+  &lt;p&gt;Intelligence at the speed of business.&lt;/p&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section class=&quot;features&quot;&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;DocScan&lt;/h2&gt;
+      &lt;p&gt;Automated data extraction for enterprise.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;FlowEngine&lt;/h2&gt;
+      &lt;p&gt;Workflow automation for seamless processes.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;feature&quot;&gt;
+      &lt;h2&gt;InsightAPI&lt;/h2&gt;
+      &lt;p&gt;Analytics integration for data-driven decisions.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section class=&quot;about&quot;&gt;
+    &lt;h2&gt;About Us&lt;/h2&gt;
+    &lt;p&gt;Founded in 2023, NeuralPath AI is a San Francisco-based tech startup. We&#x27;ve raised $12M in Series A funding and serve over 50+ enterprise clients.&lt;/p&gt;
+  &lt;/section&gt;
+  &lt;footer&gt;
+    &lt;p&gt;NeuralPath AI, San Francisco, CA. SOC 2 compliant. 2023.&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header after">
+        <span>Llama-3.1-8B-Instruct-4bit — Distilled</span>
+        <span class="score">Score: 97/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 48 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">78 tags</span> </div>
+      <div class="panel-content" id="panel-3-after">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>NeuralPath AI | Intelligence at the speed of business.</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c2c2c; color: #f7f8fa; line-height: 1.6; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav.logo { font-size: 1.5rem; font-weight: 800; color: #d4d4d4; }
+  nav.logo span { color: #0a1628; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { text-decoration: none; color: #d4d4d4; font-weight: 500; transition: color 0.3s; }
+  nav ul li a:hover { color: #0a1628; }
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #162a50 50%, #1a3366 100%); color: #f7f8fa; text-align: center; padding: 100px 20px 90px; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  .hero h1 { font-size: 3.2rem; margin-bottom: 8px; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
+  .hero.ampersand { color: #c9a84c; }
+  .hero.tagline { font-size: 1.4rem; margin-bottom: 30px; font-style: italic; color: #c0cfe0; }
+  .hero.cta { display: inline-block; background: #d4d4d4; color: #0a1628; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .hero.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10,22,40,0.12); }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2.2rem; color: #0a1628; margin-bottom: 10px; }
+  .section-title span { color: #c9a84c; }
+  .section-divider { width: 60px; height: 3px; background: #c9a84c; margin: 0 auto 50px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+  .service-card { background: #f7f8fa; border-top: 4px solid #c9a84c; padding: 35px 28px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; border-radius: 16px; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 15px; }
+  .service-card h3 { color: #0a1628; font-size: 1.3rem; margin-bottom: 12px; }
+  .service-card p { color: #555; font-size: 0.95rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .about-section { background: #0a1628; color: #f7f8fa; padding: 70px 40px; }
+  .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about-inner h2 { color: #c9a84c; font-size: 2rem; margin-bottom: 20px; }
+  .about-inner p { line-height: 1.8; font-size: 1.05rem; }
+  .stats { display: flex; gap: 40px; margin-top: 30px; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #c9a84c; font-weight: 800; }
+  .stat.label { font-size: 0.85rem; color: #8fa8c8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #c9a84c, #dbb850); text-align: center; padding: 50px 20px; }
+  .cta-banner h2 { color: #0a1628; font-size: 1.8rem; margin-bottom: 10px; }
+  .cta-banner p { color: #2c3e1e; font-size: 1.05rem; margin-bottom: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .cta-banner a { background: #0a1628; color: #c9a84c; padding: 14px 36px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  footer { background: #060e1a; color: #8fa8c8; padding: 40px 40px 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+  .footer-col h4 { color: #c9a84c; margin-bottom: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-col p,.footer-col a { font-size: 0.9rem; color: #8fa8c8; text-decoration: none; line-height: 1.9; }
+  .footer-col a:hover { color: #c9a84c; }
+  .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a2a40; font-size: 0.85rem; color: #5a7090; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-inner { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 15px; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class=&quot;logo&quot;>🧠 NeuralPath AI <span>&amp;</span> Intelligence at the speed of business.</div>
+  <ul>
+    <li><a href=&quot;#services&quot;>Services</a></li>
+    <li><a href=&quot;#about&quot;>About</a></li>
+    <li><a href=&quot;#contact&quot;>Contact</a></li>
+  </ul>
+</nav>
+<header class=&quot;hero&quot;>
+  <h1>NeuralPath AI</h1>
+  <span class=&quot;ampersand&quot;>&amp;</span>
+  <p class=&quot;tagline&quot;>Intelligence at the speed of business.</p>
+  <a href=&quot;#contact&quot; class=&quot;cta&quot;>Get Started</a>
+</header>
+<main>
+  <section id=&quot;services&quot;>
+    <h2 class=&quot;section-title&quot;>Our Products</h2>
+    <div class=&quot;section-divider&quot;></div>
+    <div class=&quot;services-grid&quot;>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>📜</div>
+        <h3>DocScan</h3>
+        <p>Automated data extraction with high accuracy and speed.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>🛣️</div>
+        <h3>FlowEngine</h3>
+        <p>Workflow automation that saves time and increases productivity.</p>
+      </div>
+      <div class=&quot;service-card&quot;>
+        <div class=&quot;icon&quot;>📊</div>
+        <h3>InsightAPI</h3>
+        <p>Analytics integration that provides valuable business insights.</p>
+      </div>
+    </div>
+  </section>
+  <section id=&quot;about&quot;>
+    <h2 class=&quot;section-title&quot;>About NeuralPath AI</h2>
+    <div class=&quot;section-divider&quot;></div>
+    <div class=&quot;about-section&quot;>
+      <div class=&quot;about-inner&quot;>
+        <div>
+          <h2>Quick Stats</h2>
+          <div class=&quot;stats&quot;>
+            <div class=&quot;stat&quot;>
+              <div class=&quot;number&quot;>50+</div>
+              <div class=&quot;label&quot;>Enterprise Clients</div>
+            </div>
+            <div class=&quot;stat&quot;>
+              <div class=&quot;number&quot;>$12M</div>
+              <div class=&quot;label&quot;>Series A Funding</div>
+            </div>
+            <div class=&quot;stat&quot;>
+              <div class=&quot;number&quot;>2023</div>
+              <div class=&quot;label&quot;>Founded</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2>Short About</h2>
+          <p>NeuralPath AI is a tech startup based in San Francisco that builds AI-powered document processing tools for enterprise. Our products, DocScan, FlowEngine, and InsightAPI, are designed to automate data extraction, workflow optimization, and analytics integration. We believe that intelligence should be at the speed of business.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer id=&quot;contact&quot;>
+  <div class=&quot;footer-inner&quot;>
+    <div class=&quot;footer-col&quot;>
+      <h4>🏙️ Location</h4>
+      <p>NeuralPath AI<br>San Francisco, CA<br>USA</p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>📞 Contact Us</h4>
+      <p>Phone: <a href=&quot;tel:4155550120&quot;>415-555-0120</a><br>Email: <a href=&quot;mailto:hello@neuralpath.ai&quot;>hello@neuralpath.ai</a></p>
+    </div>
+    <div class=&quot;footer-col&quot;>
+      <h4>🏠 Visit Our Website</h4>
+      <p><a href=&quot;https://neuralpath.ai&quot;>neuralpath.ai</a></p>
+    </div>
+  </div>
+  <div class=&quot;footer-bottom&quot;>
+    <p>© 2024 NeuralPath AI. All rights reserved. Made with 🧠 for entrepreneurs.</p>
+  </div>
+</footer>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;NeuralPath AI | Intelligence at the speed of business.&lt;/title&gt;
+&lt;style&gt;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; background: #2c2c2c; color: #f7f8fa; line-height: 1.6; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav.logo { font-size: 1.5rem; font-weight: 800; color: #d4d4d4; }
+  nav.logo span { color: #0a1628; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { text-decoration: none; color: #d4d4d4; font-weight: 500; transition: color 0.3s; }
+  nav ul li a:hover { color: #0a1628; }
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #162a50 50%, #1a3366 100%); color: #f7f8fa; text-align: center; padding: 100px 20px 90px; position: relative; }
+  .hero::after { content: &#x27;&#x27;; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  .hero h1 { font-size: 3.2rem; margin-bottom: 8px; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
+  .hero.ampersand { color: #c9a84c; }
+  .hero.tagline { font-size: 1.4rem; margin-bottom: 30px; font-style: italic; color: #c0cfe0; }
+  .hero.cta { display: inline-block; background: #d4d4d4; color: #0a1628; padding: 16px 40px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .hero.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10,22,40,0.12); }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2.2rem; color: #0a1628; margin-bottom: 10px; }
+  .section-title span { color: #c9a84c; }
+  .section-divider { width: 60px; height: 3px; background: #c9a84c; margin: 0 auto 50px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+  .service-card { background: #f7f8fa; border-top: 4px solid #c9a84c; padding: 35px 28px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; border-radius: 16px; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 15px; }
+  .service-card h3 { color: #0a1628; font-size: 1.3rem; margin-bottom: 12px; }
+  .service-card p { color: #555; font-size: 0.95rem; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; }
+  .about-section { background: #0a1628; color: #f7f8fa; padding: 70px 40px; }
+  .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about-inner h2 { color: #c9a84c; font-size: 2rem; margin-bottom: 20px; }
+  .about-inner p { line-height: 1.8; font-size: 1.05rem; }
+  .stats { display: flex; gap: 40px; margin-top: 30px; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #c9a84c; font-weight: 800; }
+  .stat.label { font-size: 0.85rem; color: #8fa8c8; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #c9a84c, #dbb850); text-align: center; padding: 50px 20px; }
+  .cta-banner h2 { color: #0a1628; font-size: 1.8rem; margin-bottom: 10px; }
+  .cta-banner p { color: #2c3e1e; font-size: 1.05rem; margin-bottom: 25px; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; }
+  .cta-banner a { background: #0a1628; color: #c9a84c; padding: 14px 36px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  footer { background: #060e1a; color: #8fa8c8; padding: 40px 40px 30px; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+  .footer-col h4 { color: #c9a84c; margin-bottom: 12px; font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-col p,.footer-col a { font-size: 0.9rem; color: #8fa8c8; text-decoration: none; line-height: 1.9; }
+  .footer-col a:hover { color: #c9a84c; }
+  .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a2a40; font-size: 0.85rem; color: #5a7090; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-inner { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 15px; }
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;div class=&quot;logo&quot;&gt;🧠 NeuralPath AI &lt;span&gt;&amp;&lt;/span&gt; Intelligence at the speed of business.&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#about&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#contact&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;header class=&quot;hero&quot;&gt;
+  &lt;h1&gt;NeuralPath AI&lt;/h1&gt;
+  &lt;span class=&quot;ampersand&quot;&gt;&amp;&lt;/span&gt;
+  &lt;p class=&quot;tagline&quot;&gt;Intelligence at the speed of business.&lt;/p&gt;
+  &lt;a href=&quot;#contact&quot; class=&quot;cta&quot;&gt;Get Started&lt;/a&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id=&quot;services&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;Our Products&lt;/h2&gt;
+    &lt;div class=&quot;section-divider&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;services-grid&quot;&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;📜&lt;/div&gt;
+        &lt;h3&gt;DocScan&lt;/h3&gt;
+        &lt;p&gt;Automated data extraction with high accuracy and speed.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;🛣️&lt;/div&gt;
+        &lt;h3&gt;FlowEngine&lt;/h3&gt;
+        &lt;p&gt;Workflow automation that saves time and increases productivity.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;service-card&quot;&gt;
+        &lt;div class=&quot;icon&quot;&gt;📊&lt;/div&gt;
+        &lt;h3&gt;InsightAPI&lt;/h3&gt;
+        &lt;p&gt;Analytics integration that provides valuable business insights.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section id=&quot;about&quot;&gt;
+    &lt;h2 class=&quot;section-title&quot;&gt;About NeuralPath AI&lt;/h2&gt;
+    &lt;div class=&quot;section-divider&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;about-section&quot;&gt;
+      &lt;div class=&quot;about-inner&quot;&gt;
+        &lt;div&gt;
+          &lt;h2&gt;Quick Stats&lt;/h2&gt;
+          &lt;div class=&quot;stats&quot;&gt;
+            &lt;div class=&quot;stat&quot;&gt;
+              &lt;div class=&quot;number&quot;&gt;50+&lt;/div&gt;
+              &lt;div class=&quot;label&quot;&gt;Enterprise Clients&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;stat&quot;&gt;
+              &lt;div class=&quot;number&quot;&gt;$12M&lt;/div&gt;
+              &lt;div class=&quot;label&quot;&gt;Series A Funding&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;stat&quot;&gt;
+              &lt;div class=&quot;number&quot;&gt;2023&lt;/div&gt;
+              &lt;div class=&quot;label&quot;&gt;Founded&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;h2&gt;Short About&lt;/h2&gt;
+          &lt;p&gt;NeuralPath AI is a tech startup based in San Francisco that builds AI-powered document processing tools for enterprise. Our products, DocScan, FlowEngine, and InsightAPI, are designed to automate data extraction, workflow optimization, and analytics integration. We believe that intelligence should be at the speed of business.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+&lt;footer id=&quot;contact&quot;&gt;
+  &lt;div class=&quot;footer-inner&quot;&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;🏙️ Location&lt;/h4&gt;
+      &lt;p&gt;NeuralPath AI&lt;br&gt;San Francisco, CA&lt;br&gt;USA&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;📞 Contact Us&lt;/h4&gt;
+      &lt;p&gt;Phone: &lt;a href=&quot;tel:4155550120&quot;&gt;415-555-0120&lt;/a&gt;&lt;br&gt;Email: &lt;a href=&quot;mailto:hello@neuralpath.ai&quot;&gt;hello@neuralpath.ai&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;footer-col&quot;&gt;
+      &lt;h4&gt;🏠 Visit Our Website&lt;/h4&gt;
+      &lt;p&gt;&lt;a href=&quot;https://neuralpath.ai&quot;&gt;neuralpath.ai&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;footer-bottom&quot;&gt;
+    &lt;p&gt;© 2024 NeuralPath AI. All rights reserved. Made with 🧠 for entrepreneurs.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header teacher">
+        <span>claude-opus-4-6</span>
+        <span class="score">Score: 97/100</span>
+      </div>
+      <div class="badge-bar"><span class="badge" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40">Renderable</span> <span class="badge" style="background:#3b82f620;color:#3b82f6;border:1px solid #3b82f640">CSS: 54 rules</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Hero ✓</span> <span class="badge" style="background:#a855f720;color:#a855f7;border:1px solid #a855f740">Services ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">Contact ✓</span> <span class="badge" style="background:#6b728020;color:#6b7280;border:1px solid #6b728040">82 tags</span> </div>
+      <div class="panel-content" id="panel-3-teacher">
+        <iframe class="preview-frame" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>NeuralPath AI — Intelligence at the speed of business.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1a;color:#c8d1e0;line-height:1.7;}
+  a{color:#00d4ff;text-decoration:none;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 5%;max-width:1200px;margin:auto;}
+  .logo{font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:-0.5px;}
+  .logo span{color:#00d4ff;}
+  nav ul{display:flex;list-style:none;gap:2rem;}
+  nav ul li a{color:#8892a8;font-size:.95rem;transition:color .3s;}
+  nav ul li a:hover{color:#00d4ff;}
+  .btn{background:linear-gradient(135deg,#0066ff,#00d4ff);color:#fff;padding:.7rem 1.8rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .3s;display:inline-block;}
+  .btn:hover{opacity:.85;color:#fff;}
+  .btn-outline{background:transparent;border:1.5px solid #1e2a4a;color:#00d4ff;}
+  .btn-outline:hover{border-color:#00d4ff;background:rgba(0,212,255,.06);}
+
+  header{text-align:center;padding:6rem 5% 4rem;max-width:900px;margin:auto;}
+  header .badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:#00d4ff;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.5rem;letter-spacing:.5px;}
+  header h1{font-size:3.4rem;color:#fff;line-height:1.15;font-weight:800;letter-spacing:-1.5px;margin-bottom:1.2rem;}
+  header h1 span{background:linear-gradient(135deg,#0066ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  header p{font-size:1.2rem;color:#7a86a1;max-width:620px;margin:0 auto 2.5rem;}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+
+  .stats{display:flex;justify-content:center;gap:4rem;padding:2rem 5% 5rem;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .num{font-size:2rem;font-weight:800;color:#fff;}
+  .stat .num span{color:#00d4ff;}
+  .stat .label{font-size:.85rem;color:#5a6480;margin-top:.2rem;}
+
+  section{padding:5rem 5%;max-width:1100px;margin:auto;}
+  .section-title{text-align:center;margin-bottom:3rem;}
+  .section-title h2{font-size:2.2rem;color:#fff;font-weight:700;letter-spacing:-.5px;}
+  .section-title p{color:#5f6b85;margin-top:.5rem;font-size:1.05rem;}
+
+  .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;}
+  .card{background:linear-gradient(145deg,#111827,#0f1525);border:1px solid #1a2240;border-radius:16px;padding:2.2rem;transition:border-color .3s,transform .3s;}
+  .card:hover{border-color:#0066ff;transform:translateY(-4px);}
+  .card .icon{font-size:2.2rem;margin-bottom:1rem;display:inline-block;width:56px;height:56px;line-height:56px;text-align:center;background:rgba(0,102,255,.12);border-radius:14px;}
+  .card h3{color:#fff;font-size:1.25rem;margin-bottom:.6rem;}
+  .card p{color:#6b7a96;font-size:.95rem;line-height:1.65;}
+
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+  .about-text h2{font-size:2rem;color:#fff;font-weight:700;margin-bottom:1rem;letter-spacing:-.5px;}
+  .about-text p{color:#6b7a96;margin-bottom:1rem;font-size:1rem;}
+  .trust-badges{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+  .trust-badge{background:#111827;border:1px solid #1a2240;padding:.8rem 1.2rem;border-radius:12px;font-size:.85rem;color:#8892a8;display:flex;align-items:center;gap:.5rem;}
+  .trust-badge .tb-icon{font-size:1.1rem;}
+  .about-visual{background:linear-gradient(145deg,#0d1424,#111c35);border:1px solid #1a2240;border-radius:20px;height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .about-visual::before{content:'';position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(0,102,255,.25),transparent 70%);border-radius:50%;top:20%;left:20%;}
+  .about-visual::after{content:'';position:absolute;width:150px;height:150px;background:radial-gradient(circle,rgba(0,212,255,.2),transparent 70%);border-radius:50%;bottom:15%;right:20%;}
+  .about-visual span{font-size:4rem;position:relative;z-index:1;}
+
+  footer{border-top:1px solid #141c30;margin-top:4rem;padding:3rem 5%;text-align:center;}
+  .footer-inner{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  footer p{color:#3d475e;font-size:.85rem;}
+  .footer-links{display:flex;gap:1.5rem;}
+  .footer-links a{color:#4f5b75;font-size:.85rem;transition:color .3s;}
+  .footer-links a:hover{color:#00d4ff;}
+
+  @media(max-width:768px){
+    header h1{font-size:2.2rem;}
+    .about-grid{grid-template-columns:1fr;}
+    .stats{gap:2rem;}
+    nav ul{display:none;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class=&quot;logo&quot;>Neural<span>Path</span> AI</div>
+  <ul>
+    <li><a href=&quot;#products&quot;>Products</a></li>
+    <li><a href=&quot;#about&quot;>About</a></li>
+    <li><a href=&quot;#contact&quot;>Contact</a></li>
+  </ul>
+  <a href=&quot;#contact&quot; class=&quot;btn&quot;>Get a Demo</a>
+</nav>
+
+<header>
+  <div class=&quot;badge&quot;>🚀 SERIES A — $12M RAISED</div>
+  <h1>Intelligence at the <span>speed of business.</span></h1>
+  <p>NeuralPath AI builds enterprise-grade document processing tools powered by cutting-edge artificial intelligence. Extract, automate, and analyze — all in one platform.</p>
+  <div class=&quot;hero-btns&quot;>
+    <a href=&quot;#products&quot; class=&quot;btn&quot;>Explore Products</a>
+    <a href=&quot;#about&quot; class=&quot;btn btn-outline&quot;>Learn More →</a>
+  </div>
+</header>
+
+<div class=&quot;stats&quot;>
+  <div class=&quot;stat&quot;><div class=&quot;num&quot;>50<span>+</span></div><div class=&quot;label&quot;>Enterprise Clients</div></div>
+  <div class=&quot;stat&quot;><div class=&quot;num&quot;><span>$</span>12M</div><div class=&quot;label&quot;>Series A Funding</div></div>
+  <div class=&quot;stat&quot;><div class=&quot;num&quot;>99.7<span>%</span></div><div class=&quot;label&quot;>Extraction Accuracy</div></div>
+  <div class=&quot;stat&quot;><div class=&quot;num&quot;>SOC 2</div><div class=&quot;label&quot;>Compliant</div></div>
+</div>
+
+<section id=&quot;products&quot;>
+  <div class=&quot;section-title&quot;>
+    <h2>Our Products</h2>
+    <p>Three powerful tools. One intelligent platform.</p>
+  </div>
+  <div class=&quot;products&quot;>
+    <div class=&quot;card&quot;>
+      <div class=&quot;icon&quot;>📄</div>
+      <h3>DocScan</h3>
+      <p>Automated data extraction from invoices, contracts, and forms. Our AI reads, classifies, and structures unstructured documents in seconds — not hours.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <div class=&quot;icon&quot;>⚙️</div>
+      <h3>FlowEngine</h3>
+      <p>End-to-end workflow automation that routes documents, triggers approvals, and connects to your existing systems. Build intelligent pipelines with zero code.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <div class=&quot;icon&quot;>📊</div>
+      <h3>InsightAPI</h3>
+      <p>Analytics integration that transforms extracted data into actionable intelligence. RESTful APIs and real-time dashboards for every team in your organization.</p>
+    </div>
+  </div>
+</section>
+
+<section id=&quot;about&quot;>
+  <div class=&quot;about-grid&quot;>
+    <div class=&quot;about-text&quot;>
+      <h2>Built for enterprise. Powered by AI.</h2>
+      <p>Founded in 2023 in San Francisco, NeuralPath AI was created to solve the bottleneck every enterprise faces: mountains of documents and not enough time. Our team of AI researchers and enterprise engineers is building the future of intelligent document processing.</p>
+      <p>Backed by $12M in Series A funding, we serve over 50 enterprise clients across finance, healthcare, logistics, and legal — helping them move faster, reduce errors, and unlock hidden value in their data.</p>
+      <div class=&quot;trust-badges&quot;>
+        <div class=&quot;trust-badge&quot;><span class=&quot;tb-icon&quot;>🔒</span> SOC 2 Compliant</div>
+        <div class=&quot;trust-badge&quot;><span class=&quot;tb-icon&quot;>🏢</span> Enterprise SLA</div>
+        <div class=&quot;trust-badge&quot;><span class=&quot;tb-icon&quot;>🌐</span> 99.9% Uptime</div>
+      </div>
+    </div>
+    <div class=&quot;about-visual&quot;><span>🧠</span></div>
+  </div>
+</section>
+
+<footer id=&quot;contact&quot;>
+  <div class=&quot;footer-inner&quot;>
+    <p>© 2024 NeuralPath AI, Inc. · San Francisco, CA · hello@neuralpath.ai</p>
+    <div class=&quot;footer-links&quot;>
+      <a href=&quot;#&quot;>Privacy</a>
+      <a href=&quot;#&quot;>Terms</a>
+      <a href=&quot;#&quot;>Security</a>
+      <a href=&quot;#&quot;>Careers</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>" sandbox="allow-same-origin"></iframe>
+        <pre class="code-view" style="display:none"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;NeuralPath AI — Intelligence at the speed of business.&lt;/title&gt;
+&lt;style&gt;
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:&#x27;Segoe UI&#x27;,system-ui,-apple-system,sans-serif;background:#0a0e1a;color:#c8d1e0;line-height:1.7;}
+  a{color:#00d4ff;text-decoration:none;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 5%;max-width:1200px;margin:auto;}
+  .logo{font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:-0.5px;}
+  .logo span{color:#00d4ff;}
+  nav ul{display:flex;list-style:none;gap:2rem;}
+  nav ul li a{color:#8892a8;font-size:.95rem;transition:color .3s;}
+  nav ul li a:hover{color:#00d4ff;}
+  .btn{background:linear-gradient(135deg,#0066ff,#00d4ff);color:#fff;padding:.7rem 1.8rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .3s;display:inline-block;}
+  .btn:hover{opacity:.85;color:#fff;}
+  .btn-outline{background:transparent;border:1.5px solid #1e2a4a;color:#00d4ff;}
+  .btn-outline:hover{border-color:#00d4ff;background:rgba(0,212,255,.06);}
+
+  header{text-align:center;padding:6rem 5% 4rem;max-width:900px;margin:auto;}
+  header .badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:#00d4ff;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.5rem;letter-spacing:.5px;}
+  header h1{font-size:3.4rem;color:#fff;line-height:1.15;font-weight:800;letter-spacing:-1.5px;margin-bottom:1.2rem;}
+  header h1 span{background:linear-gradient(135deg,#0066ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  header p{font-size:1.2rem;color:#7a86a1;max-width:620px;margin:0 auto 2.5rem;}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+
+  .stats{display:flex;justify-content:center;gap:4rem;padding:2rem 5% 5rem;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat .num{font-size:2rem;font-weight:800;color:#fff;}
+  .stat .num span{color:#00d4ff;}
+  .stat .label{font-size:.85rem;color:#5a6480;margin-top:.2rem;}
+
+  section{padding:5rem 5%;max-width:1100px;margin:auto;}
+  .section-title{text-align:center;margin-bottom:3rem;}
+  .section-title h2{font-size:2.2rem;color:#fff;font-weight:700;letter-spacing:-.5px;}
+  .section-title p{color:#5f6b85;margin-top:.5rem;font-size:1.05rem;}
+
+  .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;}
+  .card{background:linear-gradient(145deg,#111827,#0f1525);border:1px solid #1a2240;border-radius:16px;padding:2.2rem;transition:border-color .3s,transform .3s;}
+  .card:hover{border-color:#0066ff;transform:translateY(-4px);}
+  .card .icon{font-size:2.2rem;margin-bottom:1rem;display:inline-block;width:56px;height:56px;line-height:56px;text-align:center;background:rgba(0,102,255,.12);border-radius:14px;}
+  .card h3{color:#fff;font-size:1.25rem;margin-bottom:.6rem;}
+  .card p{color:#6b7a96;font-size:.95rem;line-height:1.65;}
+
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+  .about-text h2{font-size:2rem;color:#fff;font-weight:700;margin-bottom:1rem;letter-spacing:-.5px;}
+  .about-text p{color:#6b7a96;margin-bottom:1rem;font-size:1rem;}
+  .trust-badges{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+  .trust-badge{background:#111827;border:1px solid #1a2240;padding:.8rem 1.2rem;border-radius:12px;font-size:.85rem;color:#8892a8;display:flex;align-items:center;gap:.5rem;}
+  .trust-badge .tb-icon{font-size:1.1rem;}
+  .about-visual{background:linear-gradient(145deg,#0d1424,#111c35);border:1px solid #1a2240;border-radius:20px;height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .about-visual::before{content:&#x27;&#x27;;position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(0,102,255,.25),transparent 70%);border-radius:50%;top:20%;left:20%;}
+  .about-visual::after{content:&#x27;&#x27;;position:absolute;width:150px;height:150px;background:radial-gradient(circle,rgba(0,212,255,.2),transparent 70%);border-radius:50%;bottom:15%;right:20%;}
+  .about-visual span{font-size:4rem;position:relative;z-index:1;}
+
+  footer{border-top:1px solid #141c30;margin-top:4rem;padding:3rem 5%;text-align:center;}
+  .footer-inner{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  footer p{color:#3d475e;font-size:.85rem;}
+  .footer-links{display:flex;gap:1.5rem;}
+  .footer-links a{color:#4f5b75;font-size:.85rem;transition:color .3s;}
+  .footer-links a:hover{color:#00d4ff;}
+
+  @media(max-width:768px){
+    header h1{font-size:2.2rem;}
+    .about-grid{grid-template-columns:1fr;}
+    .stats{gap:2rem;}
+    nav ul{display:none;}
+  }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;div class=&quot;logo&quot;&gt;Neural&lt;span&gt;Path&lt;/span&gt; AI&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#products&quot;&gt;Products&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#about&quot;&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#contact&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;a href=&quot;#contact&quot; class=&quot;btn&quot;&gt;Get a Demo&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;badge&quot;&gt;🚀 SERIES A — $12M RAISED&lt;/div&gt;
+  &lt;h1&gt;Intelligence at the &lt;span&gt;speed of business.&lt;/span&gt;&lt;/h1&gt;
+  &lt;p&gt;NeuralPath AI builds enterprise-grade document processing tools powered by cutting-edge artificial intelligence. Extract, automate, and analyze — all in one platform.&lt;/p&gt;
+  &lt;div class=&quot;hero-btns&quot;&gt;
+    &lt;a href=&quot;#products&quot; class=&quot;btn&quot;&gt;Explore Products&lt;/a&gt;
+    &lt;a href=&quot;#about&quot; class=&quot;btn btn-outline&quot;&gt;Learn More →&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+
+&lt;div class=&quot;stats&quot;&gt;
+  &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;num&quot;&gt;50&lt;span&gt;+&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Enterprise Clients&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;num&quot;&gt;&lt;span&gt;$&lt;/span&gt;12M&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Series A Funding&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;num&quot;&gt;99.7&lt;span&gt;%&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Extraction Accuracy&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;num&quot;&gt;SOC 2&lt;/div&gt;&lt;div class=&quot;label&quot;&gt;Compliant&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;section id=&quot;products&quot;&gt;
+  &lt;div class=&quot;section-title&quot;&gt;
+    &lt;h2&gt;Our Products&lt;/h2&gt;
+    &lt;p&gt;Three powerful tools. One intelligent platform.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;products&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;icon&quot;&gt;📄&lt;/div&gt;
+      &lt;h3&gt;DocScan&lt;/h3&gt;
+      &lt;p&gt;Automated data extraction from invoices, contracts, and forms. Our AI reads, classifies, and structures unstructured documents in seconds — not hours.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;icon&quot;&gt;⚙️&lt;/div&gt;
+      &lt;h3&gt;FlowEngine&lt;/h3&gt;
+      &lt;p&gt;End-to-end workflow automation that routes documents, triggers approvals, and connects to your existing systems. Build intelligent pipelines with zero code.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;icon&quot;&gt;📊&lt;/div&gt;
+      &lt;h3&gt;InsightAPI&lt;/h3&gt;
+      &lt;p&gt;Analytics integration that transforms extracted data into actionable intelligence. RESTful APIs and real-time dashboards for every team in your organization.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;about&quot;&gt;
+  &lt;div class=&quot;about-grid&quot;&gt;
+    &lt;div class=&quot;about-text&quot;&gt;
+      &lt;h2&gt;Built for enterprise. Powered by AI.&lt;/h2&gt;
+      &lt;p&gt;Founded in 2023 in San Francisco, NeuralPath AI was created to solve the bottleneck every enterprise faces: mountains of documents and not enough time. Our team of AI researchers and enterprise engineers is building the future of intelligent document processing.&lt;/p&gt;
+      &lt;p&gt;Backed by $12M in Series A funding, we serve over 50 enterprise clients across finance, healthcare, logistics, and legal — helping them move faster, reduce errors, and unlock hidden value in their data.&lt;/p&gt;
+      &lt;div class=&quot;trust-badges&quot;&gt;
+        &lt;div class=&quot;trust-badge&quot;&gt;&lt;span class=&quot;tb-icon&quot;&gt;🔒&lt;/span&gt; SOC 2 Compliant&lt;/div&gt;
+        &lt;div class=&quot;trust-badge&quot;&gt;&lt;span class=&quot;tb-icon&quot;&gt;🏢&lt;/span&gt; Enterprise SLA&lt;/div&gt;
+        &lt;div class=&quot;trust-badge&quot;&gt;&lt;span class=&quot;tb-icon&quot;&gt;🌐&lt;/span&gt; 99.9% Uptime&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;about-visual&quot;&gt;&lt;span&gt;🧠&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;footer id=&quot;contact&quot;&gt;
+  &lt;div class=&quot;footer-inner&quot;&gt;
+    &lt;p&gt;© 2024 NeuralPath AI, Inc. · San Francisco, CA · hello@neuralpath.ai&lt;/p&gt;
+    &lt;div class=&quot;footer-links&quot;&gt;
+      &lt;a href=&quot;#&quot;&gt;Privacy&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;Terms&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;Security&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;Careers&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(n) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('tab-btn-' + n).classList.add('active');
+  document.getElementById('tab-panel-' + n).style.display = 'flex';
+}
+
+function setView(tabIdx, mode) {
+  const panel = document.getElementById('tab-panel-' + tabIdx);
+  if (!panel) return;
+
+  // Update toggle buttons
+  const toggles = panel.querySelectorAll('.toggle-btn');
+  toggles.forEach(b => b.classList.remove('active'));
+  if (mode === 'preview') toggles[0].classList.add('active');
+  else toggles[1].classList.add('active');
+
+  // Toggle iframes and code views
+  panel.querySelectorAll('.preview-frame').forEach(f => f.style.display = mode === 'preview' ? 'block' : 'none');
+  panel.querySelectorAll('.code-view').forEach(c => c.style.display = mode === 'code' ? 'block' : 'none');
+}
+</script>
+</body>
+</html>

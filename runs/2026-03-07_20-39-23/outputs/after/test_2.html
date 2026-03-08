@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harvest & Vine — Napa Valley's Premier Farm-to-Table Restaurant</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #3a3a2e; background: #f7f3ed; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 5%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 10; }
+  nav.logo { font-size: 1.4rem; font-weight: 700; color: #olivegreen; }
+  nav.logo span { color: #terracotta; }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul li a { text-decoration: none; color: #3a3a2e; font-weight: 500; transition: color 0.3s; }
+  nav ul li a:hover { color: #terracotta; }
+  .hero { background: linear-gradient(135deg, #f7f3ed, #olivegreen); min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4rem 2rem; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, #f7f3ed, #olivegreen); }
+  .hero h1 { font-size: 3.2rem; color: #terracotta; margin-bottom: 0.5rem; text-shadow: 1px 2px 4px rgba(0,0,0,0.15); }
+  .hero.tagline { font-size: 1.4rem; color: #3a3a2e; font-style: italic; margin-bottom: 2rem; font-weight: 300; }
+  .hero.cta { display: inline-block; background: #d4a867; color: #3a3a2e; padding: 0.9rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .hero.cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .hero.symbol { font-size: 3rem; margin-bottom: 1rem; opacity: 0.8; }
+  section { padding: 5rem 5%; }
+  .section-title { text-align: center; font-size: 2.2rem; color: #olivegreen; margin-bottom: 0.5rem; }
+  .section-subtitle { text-align: center; color: #7a5C47; margin-bottom: 3rem; font-size: 1.05rem; }
+  .services { background: #f7f3ed; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; max-width: 1100px; margin: 0 auto; }
+  .service-card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid #d4a867; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 1rem; }
+  .service-card h3 { font-size: 1.4rem; color: #3a3a2e; margin-bottom: 0.5rem; }
+  .service-card p { color: #5A3E2B; font-size: 0.95rem; }
+  .about { background: #ede8df; }
+  .about-content { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .about-text p { line-height: 1.7; color: #5A3E2B; font-size: 1.05rem; }
+  .stats { display: flex; gap: 2rem; margin-top: 3rem; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #d4a867; font-weight: 800; }
+  .stat.label { font-size: 0.85rem; color: #3a3a2e; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #d4a867, #f7f3ed); text-align: center; padding: 3rem 2rem; border-radius: 20px; }
+  .cta-banner h2 { font-size: 1.8rem; color: #3a3a2e; margin-bottom: 1rem; }
+  .cta-banner p { color: #5A3E2B; font-size: 1.05rem; margin-bottom: 2rem; }
+  .cta-banner a { text-decoration: none; color: #olivegreen; font-weight: 600; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+  .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  footer { background: #3a3a2e; color: #f7f3ed; padding: 3rem 5%; text-align: center; }
+  .footer-content { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+  .footer-col h4 { color: #d4a867; margin-bottom: 0.8rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  .footer-col p,.footer-col a { color: #e8e0d4; font-size: 0.9rem; line-height: 1.8; text-decoration: none; }
+  .footer-col a:hover { color: #terracotta; }
+  .footer-bottom { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #4a4a3e; font-size: 0.85rem; color: #5A3E2B; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-content { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">🌿 Harvest <span>&</span> Vine</div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+<header class="hero">
+  <h1>🌿 Harvest & Vine</h1>
+  <p class="tagline">From our farm to your table.</p>
+  <div class="symbol">🌿</div>
+  <a href="#contact" class="cta">🍴 Book Your Table</a>
+</header>
+<main>
+  <section id="services">
+    <h2 class="section-title">Our Menu</h2>
+    <p class="section-subtitle">Seasonal American with Mediterranean influences</p>
+    <div class="services">
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="icon">🍴 Tasting Menu: $95/person</div>
+          <h3>🍴 Tasting Menu</h3>
+          <p>A journey of 5 courses crafted by Chef Isabella Torres, James Beard nominee.</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">🍔 À La Carte Entrées: $28-$45</div>
+          <h3>🍔 À La Carte Entrées</h3>
+          <p>Fresh, locally sourced ingredients combined with Mediterranean flavors.</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">🍷 Wine List: 200+ selections</div>
+          <h3>🍷 Wine List</h3>
+          <p>An extensive collection of wines from around the world, carefully curated by our sommelier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="about">
+    <h2 class="section-title">About Harvest & Vine</h2>
+    <p class="section-subtitle">Located in the heart of Napa Valley, California</p>
+    <div class="about">
+      <div class="about-content">
+        <div class="about-text">
+          <p>Harvest & Vine is a farm-to-table restaurant that celebrates the beauty of seasonal American cuisine with Mediterranean influences. Our chef, Isabella Torres, has been nominated for a James Beard award and brings her passion for local, sustainable ingredients to every dish.</p>
+          <p>With a warm, earthy tone interior and a patio seating area overlooking the vineyards, Harvest & Vine is the perfect place to relax and enjoy a meal with friends and family.</p>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="number">👨‍🍳 1 Chef</div>
+            <div class="label">Isabella Torres</div>
+          </div>
+          <div class="stat">
+            <div class="number">🍴 3 Meals</div>
+            <div class="label">Tasting Menu, À La Carte Entrées, Wine</div>
+          </div>
+          <div class="stat">
+            <div class="number">🏠 1 Location</div>
+            <div class="label">Napa Valley, California</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer id="contact">
+  <div class="footer-content">
+    <div class="footer-col">
+      <h4>🏠 Location</h4>
+      <p>Harvest & Vine<br>Napa Valley, California<br>Mon-Sat: 5:30pm – 10pm<br>Sunday: Closed</p>
+    </div>
+    <div class="footer-col">
+      <h4>📞 Contact Us</h4>
+      <p>Phone: (707) 555-0177<br>Email: <a href="mailto:hello@harvestandvine.com">hello@harvestandvine.com</a></p>
+    </div>
+    <div class="footer-col">
+      <h4>👴 Private Dining Room</h4>
+      <p>Capacity: 40 guests<br>Price: Custom pricing<br>Phone: (707) 555-0177<br>Email: <a href="mailto:hello@harvestandvine.com">hello@harvestandvine.com</a></p>
+    </div>
+    <div class="footer-col">
+      <h4>🐾 Pets</h4>
+      <p>Not allowed inside the restaurant<br>Can be left in parked car</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Harvest & Vine, Napa Valley, California. All rights reserved. Made with 🧡 for foodies everywhere.</p>
+  </div>
+</footer>
+</body>
+</html>

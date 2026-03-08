@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian National Bank — Banking You Can Trust, Since 1952</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a2e; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav .logo { color: #c9a84c; font-size: 1.4rem; font-weight: bold; letter-spacing: 1px; }
+  nav .logo span { color: #ffffff; font-weight: normal; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #ccc; text-decoration: none; font-size: 0.9rem; font-family: Arial, sans-serif; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  header { background: linear-gradient(135deg, #0a1628 0%, #162d50 60%, #1a3a5c 100%); color: white; text-align: center; padding: 100px 20px 90px; position: relative; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  header h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
+  header h1 span { color: #c9a84c; }
+  header p.tagline { font-size: 1.3rem; color: #d4d4d4; margin-bottom: 30px; font-style: italic; }
+  header .cta-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  header .cta { display: inline-block; padding: 14px 36px; border-radius: 4px; text-decoration: none; font-family: Arial, sans-serif; font-size: 1rem; font-weight: bold; transition: all 0.3s; }
+  .cta-primary { background: #c9a84c; color: #0a1628; }
+  .cta-primary:hover { background: #e8d48b; }
+  .cta-secondary { border: 2px solid #ffffff; color: #ffffff; background: transparent; }
+  .cta-secondary:hover { background: rgba(255,255,255,0.1); }
+  .trust-bar { background: #0e1f3d; color: #a0b4cc; text-align: center; padding: 14px 20px; font-family: Arial, sans-serif; font-size: 0.85rem; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .trust-bar span { display: flex; align-items: center; gap: 6px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .services { background: #f7f8fa; padding: 70px 20px; }
+  .services .inner { max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 10px; color: #0a1628; }
+  .section-subtitle { text-align: center; color: #666; font-family: Arial, sans-serif; margin-bottom: 50px; font-size: 1rem; }
+  .gold-line { width: 60px; height: 3px; background: #c9a84c; margin: 12px auto 20px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+  .service-card { background: #ffffff; padding: 35px 30px; border-radius: 6px; border: 1px solid #e0e0e0; border-top: 4px solid #c9a84c; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(10,22,40,0.1); }
+  .service-card .icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .service-card h3 { font-size: 1.2rem; color: #0a1628; margin-bottom: 10px; }
+  .service-card p { color: #555; font-family: Arial, sans-serif; font-size: 0.95rem; line-height: 1.6; }
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .about-text h2 { font-size: 2rem; color: #0a1628; margin-bottom: 8px; }
+  .about-text p { color: #444; font-family: Arial, sans-serif; font-size: 0.95rem; margin-bottom: 16px; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .stat { background: #0a1628; color: white; padding: 30px 20px; border-radius: 6px; text-align: center; }
+  .stat .number { font-size: 2.2rem; color: #c9a84c; font-weight: bold; }
+  .stat .label { font-family: Arial, sans-serif; font-size: 0.85rem; color: #a0b4cc; margin-top: 4px; }
+  footer { background: #0a1628; color: #a0b4cc; padding: 50px 40px 30px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  footer h4 { color: #c9a84c; margin-bottom: 14px; font-size: 1rem; }
+  footer p, footer li { font-family: Arial, sans-serif; font-size: 0.9rem; line-height: 2; }
+  footer ul { list-style: none; }
+  footer a { color: #a0b4cc; text-decoration: none; }
+  footer a:hover { color: #c9a84c; }
+  .footer-bottom { max-width: 1100px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid #1a3050; text-align: center; font-family: Arial, sans-serif; font-size: 0.8rem; color: #667; }
+  @media (max-width: 768px) {
+    .about { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    header h1 { font-size: 2rem; }
+    nav ul { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">MERIDIAN <span>National Bank</span></div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#">Online Banking</a></li>
+  </ul>
+</nav>
+<header>
+  <h1>Meridian <span>National</span> Bank</h1>
+  <p class="tagline">Banking you can trust, since 1952.</p>
+  <div class="cta-group">
+    <a href="#" class="cta cta-primary">Open an Account</a>
+    <a href="#" class="cta cta-secondary">Explore Services</a>
+  </div>
+</header>
+<div class="trust-bar">
+  <span>🏛️ FDIC Insured</span>
+  <span>🏦 12 Branch Locations</span>
+  <span>📱 24/7 Online &amp; Mobile Banking</span>
+  <span>⭐ Trusted Since 1952</span>
+</div>
+<div class="services" id="services">
+  <div class="inner">
+    <h2 class="section-title">Our Services</h2>
+    <div class="gold-line"></div>
+    <p class="section-subtitle">Comprehensive financial solutions for individuals, families, and businesses.</p>
+    <div class="services-grid">
+      <div class="service-card"><div class="icon">💰</div><h3>Checking &amp; Savings</h3><p>Flexible accounts with competitive rates, no hidden fees, and seamless digital access to manage your money around the clock.</p></div>
+      <div class="service-card"><div class="icon">🏠</div><h3>Mortgages</h3><p>Fixed and adjustable-rate mortgage options with personalized guidance to help you find and finance your dream home.</p></div>
+      <div class="service-card"><div class="icon">🚗</div><h3>Auto Loans</h3><p>Competitive auto financing for new and used vehicles with quick approvals and flexible repayment terms.</p></div>
+      <div class="service-card"><div class="icon">🏢</div><h3>Business Banking</h3><p>Tailored solutions for businesses of all sizes — from commercial lending and lines of credit to treasury management services.</p></div>
+      <div class="service-card"><div class="icon">📈</div><h3>Wealth Management</h3><p>Expert financial planning, investment advisory, and retirement strategies to help you build and preserve your wealth.</p></div>
+      <div class="service-card"><div class="icon">📱</div><h3>Digital Banking</h3><p>24/7 online banking and our award-winning mobile app — deposit checks, transfer funds, and pay bills from anywhere.</p></div>
+    </div>
+  </div>
+</div>
+<section id="about">
+  <div class="about">
+    <div class="about-text">
+      <h2>About Meridian National Bank</h2>
+      <div class="gold-line" style="margin:12px 0 20px;"></div>
+      <p>Founded in 1952, Meridian National Bank has served communities across the Northeast for over seven decades. What began as a single branch built on the principles of trust, integrity, and personal service has grown into a premier regional institution with 12 locations.</p>
+      <p>Under the leadership of CEO Robert Chambers, we remain committed to the values that have guided us from the beginning — putting our customers first, investing in our communities, and delivering financial solutions that make a real difference in people's lives.</p>
+      <p>As an FDIC-insured institution, your deposits are protected, and your trust is our most valued asset.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat"><div class="number">72+</div><div class="label">Years of Service</div></div>
+      <div class="stat"><div class="number">12</div><div class="label">Branch Locations</div></div>
+      <div class="stat"><div class="number">24/7</div><div class="label">Digital Access</div></div>
+      <div class="stat"><div class="number">100K+</div><div class="label">Customers Served</div></div>
+    </div>
+  </div>
+</section>
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <h4>Meridian National Bank</h4>
+      <p>Banking you can trust, since 1952.</p>
+      <p style="margin-top:10px;">📞 1-800-MERIDIAN (637-4342)<br>📧 info@meridiannational.com<br>📍 12 branches across the Northeast</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Online Banking Login</a></li>
+        <li><a href="#">Open an Account</a></li>
+        <li><a href="#">Mortgage Rates</a></li>
+        <li><a href="#">Branch Locator</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">FDIC Information</a></li>
+        <li><a href="#">Accessibility</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Meridian National Bank. All rights reserved. Member FDIC. Equal Housing Lender. 🏠</p>
+  </div>
+</footer>
+</body>
+</html>

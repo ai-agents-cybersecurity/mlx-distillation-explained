@@ -1,0 +1,20 @@
+adapter_path: runs/2026-03-07_20-39-23/adapters
+batch_size: 1
+data: runs/2026-03-07_20-39-23/data
+fine_tune_type: lora
+iters: 360
+learning_rate: 0.0002
+lora_parameters:
+  alpha: 64
+  dropout: 0.05
+  rank: 64
+  scale: 1.0
+max_seq_length: 8192
+model: mlx-community/Llama-3.1-8B-Instruct-4bit
+num_layers: 16
+save_every: 90
+seed: 42
+steps_per_eval: 90
+steps_per_report: 1
+train: true
+val_batches: 2

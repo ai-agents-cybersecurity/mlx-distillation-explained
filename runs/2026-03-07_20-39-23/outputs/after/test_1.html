@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miridian National Bank | Banking You Can Trust</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #2c2c2c; line-height: 1.7; }
+  nav { background: #0a1628; padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; }
+  nav.logo { color: #c9a84c; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; }
+  nav ul { list-style: none; display: flex; gap: 30px; }
+  nav ul li a { color: #d4d4d4; text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+  nav ul li a:hover { color: #c9a84c; }
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #162a50 50%, #1a3366 100%); color: #fff; text-align: center; padding: 100px 20px 90px; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #c9a84c, #e8d48b, #c9a84c); }
+  .hero h1 { font-size: 3rem; letter-spacing: 2px; margin-bottom: 8px; color: #c9a84c; }
+  .hero.ampersand { color: #e8d48b; }
+  .hero.tagline { font-size: 1.35rem; font-style: italic; color: #c0cfe0; margin-bottom: 30px; }
+  .hero.cta { display: inline-block; background: #c9a84c; color: #0a1628; padding: 16px 40px; text-decoration: none; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; border: 2px solid #c9a84c; transition: all 0.3s; }
+  .hero.cta:hover { background: transparent; color: #c9a84c; }
+  .hero.symbol { font-size: 2.5rem; margin-bottom: 15px; }
+  section { padding: 70px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; color: #0a1628; margin-bottom: 10px; }
+  .section-title span { color: #c9a84c; }
+  .section-divider { width: 60px; height: 3px; background: #c9a84c; margin: 0 auto 50px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+  .service-card { background: #f7f8fa; border-top: 4px solid #c9a84c; padding: 35px 28px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
+  .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(10,22,40,0.12); }
+  .service-card.icon { font-size: 2.8rem; margin-bottom: 15px; }
+  .service-card h3 { color: #0a1628; font-size: 1.25rem; margin-bottom: 12px; }
+  .service-card p { color: #555; font-size: 0.95rem; font-family: 'Segoe UI', Arial, sans-serif; }
+  .about-section { background: #0a1628; color: #d4d4d4; padding: 70px 40px; }
+  .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about-inner h2 { color: #c9a84c; font-size: 2rem; margin-bottom: 20px; }
+  .about-inner p { line-height: 1.9; font-size: 1.02rem; }
+  .stats { display: flex; gap: 40px; margin-top: 30px; }
+  .stat { text-align: center; }
+  .stat.number { font-size: 2.5rem; color: #c9a84c; font-weight: bold; }
+  .stat.label { font-size: 0.85rem; color: #8fa8c8; font-family: 'Segoe UI', Arial, sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-banner { background: linear-gradient(90deg, #c9a84c, #dbb850); text-align: center; padding: 50px 20px; }
+  .cta-banner h2 { color: #0a1628; font-size: 1.8rem; margin-bottom: 10px; }
+  .cta-banner p { color: #2c3e1e; font-size: 1.05rem; margin-bottom: 25px; font-family: 'Segoe UI', Arial, sans-serif; }
+  .cta-banner a { background: #0a1628; color: #c9a84c; padding: 14px 36px; text-decoration: none; font-weight: bold; font-size: 1rem; letter-spacing: 1px; border: 2px solid #0a1628; transition: all 0.3s; }
+  .cta-banner a:hover { background: transparent; color: #0a1628; }
+  footer { background: #060e1a; color: #8fa8c8; padding: 40px 40px 30px; font-family: 'Segoe UI', Arial, sans-serif; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+  .footer-col h4 { color: #c9a84c; margin-bottom: 12px; font-family: Georgia, serif; }
+  .footer-col p,.footer-col a { font-size: 0.9rem; color: #8fa8c8; text-decoration: none; line-height: 2; }
+  .footer-col a:hover { color: #c9a84c; }
+  .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a2a40; font-size: 0.85rem; color: #5a7090; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 768px) {
+   .about-inner { grid-template-columns: 1fr; }
+   .hero h1 { font-size: 2.2rem; }
+   .stats { justify-content: center; }
+    nav ul { gap: 15px; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Meridian National Bank</div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+<header class="hero">
+  <h1>Miridian National Bank</h1>
+  <span class="ampersand">&</span>
+  <p class="tagline">Banking you can trust, since 1952.</p>
+  <a href="#contact" class="cta">Start Banking Today</a>
+  <span class="symbol">🏛️</span>
+</header>
+<main>
+  <section id="services">
+    <h2 class="section-title">Our <span>Services</span></h2>
+    <div class="section-divider"></div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="icon">🏠</div>
+        <h3>Checking & Savings Accounts</h3>
+        <p>Full-service checking and savings accounts with competitive rates and no fees.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">🛁</div>
+        <h3>Mortgages</h3>
+        <p>Competitive mortgage rates and terms to fit your budget.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">🚗</div>
+        <h3>Auto Loans</h3>
+        <p>Low-interest auto loans with flexible terms and no hidden fees.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">🏢</div>
+        <h3>Business Banking</h3>
+        <p>Full-service banking for businesses of all sizes.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">📜</div>
+        <h3>Wealth Management</h3>
+        <p>Comprehensive wealth management services to protect and grow your assets.</p>
+      </div>
+    </div>
+  </section>
+  <section id="about">
+    <h2 class="section-title">About Meridian National Bank</h2>
+    <div class="section-divider"></div>
+    <div class="about-section">
+      <div class="about-inner">
+        <div>
+          <h2>Mission Statement</h2>
+          <p>Meridian National Bank has been serving the Northeast since 1952. Our mission is to provide exceptional banking services with a personal touch.</p>
+        </div>
+        <div>
+          <h2>CEO</h2>
+          <p>Robert Chambers</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="cta-banner">
+    <h2>Your First Visit</h2>
+    <p>Take the first step. Visit us today and experience the Meridian National Bank difference.</p>
+    <a href="tel:1(800)555-0177">Call (800) 555-0177</a>
+  </div>
+</main>
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Branch Locations</h4>
+      <p>12 branch locations across the Northeast. Find your nearest branch or ATM.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Online Banking</h4>
+      <p>24/7 online banking and mobile app. Manage your accounts, transfer funds, and pay bills from anywhere.</p>
+    </div>
+    <div class="footer-col">
+      <h4>FDIC Insured</h4>
+      <p>Your deposits are insured up to $250,000. For more information, visit the FDIC website.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <p>Phone: <a href="tel:1(800)555-0177">1 (800) 555-0177</a><br>Email: <a href="mailto:info@meridianbank.com">info@meridianbank.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Meridian National Bank. All rights reserved. FDIC Insured. Equal Housing Lender.</p>
+  </div>
+</footer>
+</body>
+</html>
